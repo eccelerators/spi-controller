@@ -1,0 +1,84 @@
+//******************************************************************************
+//
+//                  /------o
+//            eccelerators
+//         o------/
+//
+// This file is an Eccelerators GmbH sample project.
+//
+// MIT License:
+// Copyright (c) 2023 Eccelerators GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//******************************************************************************
+use Eccelerators.Library.Base.*;
+namespace Eccelerators.Library.IP
+{
+
+	@Generator('docs.file_type', 'ReStructured Text')
+	@Generator('c.header', 'structures')
+    interface SpiControllerIfc
+	{
+		Name = "Spi Controller Interface";
+		Description = "
+			Interface containing a basic SPI controller block.
+			
+	    «SpiControllerIfc.Link_Substitutions.Description»	
+	    	
+		|
+		";
+		AddressBusWidth = 16;
+		DataBusWidth = 32; 
+		Blocks = [SpiControllerBlk];
+		
+		object Link_Substitutions
+		{
+			Description = "			
+				.. |.Activation....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»<###
+				.. |.Activated....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»/val:«DoubleBufferControllerBlk.ControlReg.Activation.Activated.Id»<###
+				.. |.DeActivated....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»/val:«DoubleBufferControllerBlk.ControlReg.Activation.DeActivated.Id»<###
+				 
+				.. |.SwBuffer....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Id»<###
+				.. |.Prepared....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Id»/val:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Prepared.Id»<###
+
+				.. |.StatusReg....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»<###
+				.. |.Operation....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»<###
+				.. |.Off....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:«DoubleBufferControllerBlk.StatusReg.Operation.Off.Id»<###
+				.. |.Idle....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:«DoubleBufferControllerBlk.StatusReg.Operation.Idle.Id»<###
+				.. |.Busy....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:«DoubleBufferControllerBlk.StatusReg.Operation.Busy.Id»<###
+				 
+				.. |.HwBuffer....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»<###
+				.. |.Available....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»/val:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Available.Id»<###
+				.. |.UnAvailable....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»/val:«DoubleBufferControllerBlk.StatusReg.HwBuffer.UnAvailable.Id»<###			 				 
+
+				.. |.dlgCellBffr....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CellBuffer.Id»<###
+				.. |.regCmdCfg....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdConfigCell.Id»<###
+				.. |.regCmdTrm....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdTransmitCell.Id»<###
+				.. |.regCmdTrcv....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdTransceiveCell.Id»<###
+				.. |.regCmdGoto....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdGotoCell.Id»<###
+				.. |.datForCnt....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdForLoopCell.Id»/bit:«SpiControllerBlk.CmdForLoopCell.ForLoopCount.Id»<###
+
+				.. |.AddrToGt....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdEndCell.Id»/bit:«SpiControllerBlk.CmdEndCell.AddressToGoto.Id»<###	
+				.. |.AutRstrt....| replace:: ###>ifc:«SpiControllerIfc.Id»/blk:«SpiControllerBlk.Id»/fld:«SpiControllerBlk.CmdEndCell.Id»/bit:«SpiControllerBlk.CmdEndCell.AutoRestart.Id»<###
+			";
+		}
+		
+	}
+
+}

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SpiControllerIfc">
+	
+	<condition property="is_windows">
+		<os family="windows" />
+	</condition>
+
+	<!-- Properties -->
+	<property environment="env" />
+	<property name="HXS_FILES" value="
+		hxs/bases/UsualObjects.hxs 
+		hxs/bases/DoubleBufferControllerBlk.hxs 
+		hxs/SpiControllerBlk.hxs 
+		hxs/${ant.project.name}.hxs" 
+	/>
+	
+	<property name="copyright" value="2023, Eccelerators GmbH" />
+	<property name="author" value="Eccelerators GmbH" />
+	<property name="version" value="(${env.CI_COMMIT_REF_NAME} - ${env.CI_COMMIT_SHORT_SHA})" />
+	<property name="release" value="(${env.CI_COMMIT_REF_NAME} - ${env.CI_COMMIT_SHORT_SHA})" />
+	
+	<property name="TEX_FILE" value="spicontroller.tex" />
+
+	<target name="clean" description="Delete all previously generated result files">
+		<delete dir="src/docs/src-gen" failonerror="false"/>
+		<delete dir="src-gen" failonerror="false" />
+	</target>
+
+	<target name="all" depends="
+		hxs2html,
+		hxs2vhdl,
+		hxs2c,
+		hxs2simstm,
+		hxs2python
+		" description="compile all" />
+
+	<target name="hxs2html" depends="hxs2rst, rst2html" description="Build html description from hxs description">
+	</target>
+
+	<target name="rst2html" description="Build html description form rst description">
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="src/docs/src-gen">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<copy todir="src/docs/src-gen">
+			<fileset dir="src-gen/docs">
+				<include name="**/*${ant.project.name}*.rst" />
+			</fileset>
+		</copy>
+		<copy todir="src/docs/src-gen/resources">
+			<fileset dir="hxs/resources">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+		<run_sphinx_html />
+		<delete dir="src/docs/src-gen" failonerror="false" />
+	</target>
+
+	<target name="hxs2rst" description="Build docs text description">
+		<run_hxsc out-dir="src-gen/docs" extension="docs" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/docs">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="hxs2vhdl" description="Build vhdl files">
+		<run_hxsc out-dir="src-gen/vhdl" extension="vhdl" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/vhdl">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="hxs2c" description="Build c files">
+		<run_hxsc out-dir="src-gen/c" extension="c" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/c">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="hxs2simstm" description="Build simstm files">
+		<run_hxsc out-dir="src-gen/simstm" extension="simstm" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/simstm">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="hxs2python" description="Build python files">
+		<run_hxsc out-dir="src-gen/python" extension="python" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/python">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="rst2latex" description="Build latex description from rst description">
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="src/docs/src-gen">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<copy todir="src/docs/src-gen">
+			<fileset dir="src-gen/docs">
+				<include name="**/*${ant.project.name}*.rst" />
+			</fileset>
+		</copy>
+		<copy todir="src/docs/src-gen/resources">
+			<fileset dir="hxs/resources">
+				<include name="**/*.png" />
+			</fileset>
+		</copy>
+		<run_sphinx_latex />
+		<delete dir="src/docs/src-gen" failonerror="false" />
+	</target>
+
+	<target name="latex2pdf" description="Build docs text description">
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="src-gen/pdf">
+				<include name="**/*" />
+			</fileset>
+		</delete>
+		<exec executable="latexmk">
+			<arg value="-pdf" />
+			<arg value="-dvi-" />
+			<arg value="-ps-" />
+			<arg value="-cd" />
+			<arg value="src-gen/latex/${TEX_FILE}" />
+		</exec>
+		<copy todir="src-gen/pdf">
+			<fileset dir="src-gen/latex/">
+				<include name="**/*.pdf" />
+			</fileset>
+		</copy>
+	</target>
+
+	<macrodef name="run_hxsc">
+		<attribute name="out-dir" />
+		<attribute name="extension" />
+		<attribute name="in-files" />
+		<sequential>
+			<antcall target="-exec_hxsc_lin">
+				<param name="out-dir" value="@{out-dir}" />
+				<param name="extension" value="@{extension}" />
+				<param name="in-files" value="@{in-files}" />
+			</antcall>
+			<antcall target="-exec_hxsc_win">
+				<param name="out-dir" value="@{out-dir}" />
+				<param name="extension" value="@{extension}" />
+				<param name="in-files" value="@{in-files}" />
+			</antcall>
+		</sequential>
+	</macrodef>
+
+	<target name="-exec_hxsc_win" description="Execute HxS compiler on windows" if="is_windows">
+		<exec executable="hxsc.bat">
+			<arg value="--out-dir" />
+			<arg value="${out-dir}" />
+			<arg value="${extension}" />
+			<arg line="${in-files}" />
+		</exec>
+	</target>
+
+	<target name="-exec_hxsc_lin" description="Execute HxS compiler on windows" unless="is_windows">
+		<exec executable="hxsc">
+			<arg value="--out-dir" />
+			<arg value="${out-dir}" />
+			<arg value="${extension}" />
+			<arg value="${in-files}" />
+		</exec>
+	</target>
+
+	<macrodef name="run_sphinx_html">
+		<sequential>
+			<antcall target="-exec_sphinx_html_python">
+			</antcall>
+		</sequential>
+	</macrodef>
+
+
+	<target name="-exec_sphinx_html_python3" description="Execute command python3 -m sphinx">
+		<echo message="May fail intentionally, mitigated by later call of python"/>
+		<exec executable="python3" resultproperty="python3-exec.state" failonerror="false">
+			<arg value="-m" />
+			<arg value="sphinx" />
+			<arg value="-b" />
+			<arg value="html" />
+			<arg value="-C" />
+			<arg value="-D" />
+			<arg value="html_theme=haiku" />
+			<arg value="-D" />
+			<arg value="html_static_path=" />
+			<arg value="-D" />
+			<arg value="templates_path=" />
+			<arg value="-D" />
+			<arg value="project=${ant.project.name}" />
+			<arg value="-D" />
+			<arg value="copyright=${copyright}" />
+			<arg value="-D" />
+			<arg value="author=${author}" />
+			<arg value="-D" />
+			<arg value="version=(${version})" />
+			<arg value="-D" />
+			<arg value="release=(${release})" />
+			<arg value="src/docs" />
+			<arg value="src-gen/html" />
+		</exec>
+		<condition property="python3-exec.failed">
+			<not>
+				<equals arg1="${python3-exec.state}" arg2="0" />
+			</not>
+		</condition>
+	</target>
+
+	<target name="-exec_sphinx_html_python" if="python3-exec.failed" depends="-exec_sphinx_html_python3" description="Execute command python3 -m sphinx">
+		<exec executable="python">
+			<arg value="-m" />
+			<arg value="sphinx" />
+			<arg value="-b" />
+			<arg value="html" />
+			<arg value="-C" />
+			<arg value="-D" />
+			<arg value="html_theme=haiku" />
+			<arg value="-D" />
+			<arg value="html_static_path=" />
+			<arg value="-D" />
+			<arg value="templates_path=" />
+			<arg value="-D" />
+			<arg value="project=${ant.project.name}" />
+			<arg value="-D" />
+			<arg value="copyright=${copyright}" />
+			<arg value="-D" />
+			<arg value="author=${author}" />
+			<arg value="-D" />
+			<arg value="version=(${version})" />
+			<arg value="-D" />
+			<arg value="release=(${release})" />
+			<arg value="src/docs" />
+			<arg value="src-gen/html" />
+		</exec>
+
+	</target>
+
+	<macrodef name="run_sphinx_latex">
+		<sequential>
+			<antcall target="-exec_sphinx_latex_python">
+			</antcall>
+		</sequential>
+	</macrodef>
+
+	<target name="-exec_sphinx_latex_python3" description="Execute command python3 -m sphinx">
+		<exec executable="python3" resultproperty="python3-exec-latex.state" failonerror="false">
+			<arg value="-m" />
+			<arg value="sphinx" />
+			<arg value="-b" />
+			<arg value="latex" />
+			<arg value="-C" />
+			<arg value="-D" />
+			<arg value="project=${ant.project.name}" />
+			<arg value="-D" />
+			<arg value="copyright=${copyright}" />
+			<arg value="-D" />
+			<arg value="author=${author}" />
+			<arg value="-D" />
+			<arg value="version=(${version})" />
+			<arg value="-D" />
+			<arg value="release=(${release})" />
+			<arg value="-D" />
+			<arg value="targetname=doc.tex"/>
+			<arg value="src/docs" />
+			<arg value="src-gen/latex" />
+		</exec>
+		<condition property="python3-exec-latex.failed">
+			<not>
+				<equals arg1="${python3-exec-latex.state}" arg2="0" />
+			</not>
+		</condition>
+	</target>
+
+	<target name="-exec_sphinx_latex_python" if="python3-exec-latex.failed" depends="-exec_sphinx_latex_python3" description="Execute command python3 -m sphinx">
+		<exec executable="python">
+			<arg value="-m" />
+			<arg value="sphinx" />
+			<arg value="-b" />
+			<arg value="latex" />
+			<arg value="-C" />
+			<arg value="-D" />
+			<arg value="project=${ant.project.name}" />
+			<arg value="-D" />
+			<arg value="copyright=${copyright}" />
+			<arg value="-D" />
+			<arg value="author=${author}" />
+			<arg value="-D" />
+			<arg value="version=(${version})" />
+			<arg value="-D" />
+			<arg value="release=(${release})" />
+			<arg value="-D" />
+			<arg value="targetname=doc.tex"/>
+			<arg value="src/docs" />
+			<arg value="src-gen/latex" />
+		</exec>
+	</target>
+
+</project>

@@ -1,0 +1,246 @@
+//******************************************************************************
+//
+//                  /------o
+//            eccelerators
+//         o------/
+//
+// This file is an Eccelerators GmbH sample project.
+//
+// MIT License:
+// Copyright (c) 2023 Eccelerators GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//******************************************************************************
+use Eccelerators.Library.Base.*;
+
+namespace Eccelerators.Library.Base
+{
+	block DoubleBufferControllerBlk
+	{
+		Name = "Double Buffer Controller Block";
+		Description = "
+			This block is a base for controllers with dual buffer memories to exchange data between SW and HW.
+			Its purpose is to be inherited by implementations of e.g., SPI, I2C etc. controllers based on this concept.
+			
+			SW-operation flow:
+			 
+			.. image:: resources/SwFlow.png
+			 			 			 
+			";
+		Registers = [
+			DoubleBufferControllerBlk.ControlReg,
+			DoubleBufferControllerBlk.StatusReg
+		];
+		Size = 0x08;
+						
+		register ControlReg
+		{
+			Name = "Control Register";
+			Width = 32;
+			WriteTransparentPulse = true;
+			Bits = [
+				Reserved(Width=30),	
+				DoubleBufferControllerBlk.ControlReg.SwBuffer,
+				DoubleBufferControllerBlk.ControlReg.Activation
+			];
+			
+			enum Activation
+			{
+				Name = "Controller Activation";	
+				Description = "
+					When this bit is set to |.Activated....|, the controller HW starts running and waits for the bit
+					|.SwBuffer....| to be set to |.Prepared....| by SW.
+		
+					When it is set, the controller HW expects a by SW prepared buffer and starts processing it.
+					The buffer may have been prepared and the bit |.SwBuffer....| may have been set before setting the bit |.Activation....|
+					to |.Activated....|.
+				
+		            When the bit |.Activation....| is set to |.DeActivated....|, the controller is actually deactivated **after** the current HW buffer and
+					an eventually pending prepared SW buffer have been processed completely. This can be monitored by reading the |.Operation....| state in the |.StatusReg....|.
+					";	
+				Behaviour = BitBehaviour.Register; 
+				Width = 1;
+				Values = [
+					DoubleBufferControllerBlk.ControlReg.Activation.Activated, 
+					DoubleBufferControllerBlk.ControlReg.Activation.DeActivated
+				];
+				value Activated
+					{
+						Name = "Set the controller to be activated or check if it is activated.";
+						Value = 0b1;
+					}		
+					value DeActivated
+					{
+						Name = "Set the controller to be deactivated or check if it is deactivated.";
+						Value = 0b0;
+					}
+				Resets = [Rst(Value=0b0)];				
+			}
+					
+			enum SwBuffer
+			{
+				Name = "Buffer owned by SW";
+				Description = "
+				    SW writes the value |.Prepared....| to this bit when it has completely prepared the frame content of a SW owned buffer, thus committing its ownership to HW.
+				    The value isn't stored and cannot be read back by SW. Solely the write access triggers the commit action.		
+					";
+				Behaviour = BitBehaviour.WriteTransparent;
+				Width = 1;
+				Values = [
+					DoubleBufferControllerBlk.ControlReg.SwBuffer.Prepared,
+					DoubleBufferControllerBlk.ControlReg.SwBuffer.InEffective
+				];
+				value Prepared
+				{
+					Name = "Notify HW to take ownership of a prepared buffer prepared.";
+					Behaviour = ValueBehaviour.Write;
+					Value = 0b1;
+				}
+				value InEffective
+				{
+					Name = "Writing this value has no effect.";
+					Behaviour = ValueBehaviour.Write;
+					Value = 0b0;
+				}
+				Resets = [Rst(Value=0b0, Behaviour=ResetBehaviour.Write)];								
+			}							
+		}
+	
+		register StatusReg
+		{
+			Name = "Status Register";
+			Width = 32;
+			Bits = [
+				Reserved(Width=29),
+				DoubleBufferControllerBlk.StatusReg.HwBuffer,
+				DoubleBufferControllerBlk.StatusReg.Operation
+			];
+			enum Operation
+			{
+				Name = "Report of operational state";
+				Description = "
+					The bits of |.Operation....| show |.Off....| when the controller is completety deactivated. 
+					This is the case if it hasn't been activated yet or if it has been deactivated. For the later case 
+					the bits |.Operation....| show |.Busy....| until all pending prepared SW buffers have been processed 
+					by HW and then show |.Off....|.
+		 
+					The bits of |.Operation....| show |.Idle....| when HW is waiting for a prepared SW buffer.		
+					";
+				Behaviour = BitBehaviour.ReadTransparent;
+				Width = 2;
+				Values = [
+					DoubleBufferControllerBlk.StatusReg.Operation.Off, 
+					DoubleBufferControllerBlk.StatusReg.Operation.Idle, 
+					DoubleBufferControllerBlk.StatusReg.Operation.Busy, 
+					DoubleBufferControllerBlk.StatusReg.Operation.DontCareWrite
+				];
+				value Off
+				{
+					Name = "The controller has processed the last buffer after deactivation and is off now.";
+					Behaviour = ValueBehaviour.Read;
+					Value = 0b00;
+				}				
+				value Idle
+				{
+					Name = "The controller has not yet or no more buffers prepared by SW to be processed by HW.";
+					Behaviour = ValueBehaviour.Read;
+					Value = 0b10;
+				}				
+				value Busy
+				{
+					Name = "The controller is busy and processing a buffer prepared by SW.";
+					Behaviour = ValueBehaviour.Read;
+					Value = 0b11;
+				}				
+				value DontCareWrite
+				{
+					Name = "Any value written has no effect.";
+					Behaviour = ValueBehaviour.Write;
+					Value = 0b**;
+				}
+				Resets = [Rst(Value=0b00, Behaviour=ResetBehaviour.Read)];
+
+            }
+			
+			enum HwBuffer
+			{
+				Name = "Buffer owned by HW";
+				Description = "
+				    HW sets this bit to |.Available....|, when it has completely ended processing a HW owned buffer, thus committing its ownership to SW. 
+				    	
+				    The first two sequentially presented buffers to SW after a controller activation contain undefined data.	
+				    		    
+					The following buffers necessarily had been processed by HW already. They contain their previous frame transmit content and 
+					the received data collected during their already completed processing by HW. 
+								
+					After the SW has processed the frame receive data in the buffer, it prepares the new frame transmit data e.g.
+					modify or keep its previous frame content or write a completely new frame content.
+		
+					Then SW sets |.SwBuffer....| to |.Prepared....| to hand it over to HW to be processed.
+					";
+				Behaviour = BitBehaviour.ReadTransparent;
+				Width = 1;
+				Values = [
+					DoubleBufferControllerBlk.StatusReg.HwBuffer.Available, 
+					DoubleBufferControllerBlk.StatusReg.HwBuffer.UnAvailable
+
+				];
+				value Available
+				{
+					Name = "Available";
+					Behaviour = ValueBehaviour.Read;
+					Value = 0b1;
+				}		
+				value UnAvailable
+				{
+					Name = "Not Available";
+					Behaviour = ValueBehaviour.Read;
+					Value = 0b0;
+				}
+				Resets = [Rst(Value=0b0, Behaviour=ResetBehaviour.Read)];								
+			}
+		
+		}
+
+//		object Link_Substitutions
+//		{
+//			Description = "			
+//				.. |.Activation....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»<###
+//				.. |.Activated....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»/val:«DoubleBufferControllerBlk.ControlReg.Activation.Activated.Id»<###
+//				.. |.DeActivated....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.Activation.Id»/val:«DoubleBufferControllerBlk.ControlReg.Activation.DeActivated.Id»<###
+//				 			
+//				.. |.SwBuffer....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Id»<###
+//				.. |.Prepared....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.ControlReg.Id»/bit:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Id»/val:«DoubleBufferControllerBlk.ControlReg.SwBuffer.Prepared.Id»<###
+//
+//                .. |.StatusReg....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»<###
+//				.. |.Operation....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»<###
+//				.. |.Off....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:bit:«DoubleBufferControllerBlk.StatusReg.Operation.Off.Id»<###
+//				.. |.Idle....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:bit:«DoubleBufferControllerBlk.StatusReg.Operation.Idle.Id»<###
+//				.. |.Busy....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.Operation.Id»/val:bit:«DoubleBufferControllerBlk.StatusReg.Operation.Busy.Id»<###
+//				 
+//				.. |.HwBuffer....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»<###
+//				.. |.Available....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»/val:bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Available.Id»<###
+//				.. |.UnAvailable....| replace:: ###>ifc:Placeholder/blk:«DoubleBufferControllerBlk.Id»/fld:«DoubleBufferControllerBlk.StatusReg.Id»/bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.Id»/val:bit:«DoubleBufferControllerBlk.StatusReg.HwBuffer.UnAvailable.Id»<###			 				 
+//			";
+//		}
+	
+	}
+
+
+}
