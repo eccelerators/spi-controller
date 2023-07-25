@@ -4,6 +4,6 @@
 [submodule "eccelerators-docbook"]
 	path = eccelerators-docbook
 	url = git@github.com:eccelerators/eccelerators-docbook.git
-[submodule "sphinx-docbook"]
-	path = sphinx-docbook
-	url = git@github.com:eccelerators/sphinx-docbook.git
+[submodule "sphinx_docbook"]
+	path = sphinx_docbook
+	url = git@github.com:eccelerators/sphinx_docbook.git
