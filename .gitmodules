@@ -1,0 +1,9 @@
+[submodule "sphinx-template"]
+	path = sphinx-template
+	url = git@github.com:eccelerators/sphinx-template.git
+[submodule "eccelerators-docbook"]
+	path = eccelerators-docbook
+	url = git@github.com:eccelerators/eccelerators-docbook.git
+[submodule "sphinx-docbook"]
+	path = sphinx-docbook
+	url = git@github.com:eccelerators/sphinx-docbook.git

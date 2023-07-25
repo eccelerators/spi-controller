@@ -6,7 +6,7 @@ Welcome to SpiController's documentation!
    :caption: Contents:
 
 
-   src-gen/Eccelerators.Library.IP.SpiControllerIfc-composite
+   Eccelerators.Library.IP.SpiControllerIfc-composite
 
 
 Indices and tables

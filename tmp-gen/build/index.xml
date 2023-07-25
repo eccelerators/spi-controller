@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<section xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mathml="http://www.w3.org/1998/Math/MathML" xmlns="http://docbook.org/ns/docbook" xml:id="indices-and-tables">
+  <title>Indices and tables</title>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link linkend="genindex">Index</link>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link linkend="search">Search Page</link>
+      </para>
+    </listitem>
+  </itemizedlist>
+</section>
