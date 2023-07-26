@@ -66,12 +66,25 @@
 	<!-- Tasks -->
 	<taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop" classpathref="classpath.xslt" />
 	
-	<target name="clean" description="Delete all previously generated result files">
-		<delete dir="src/rst/src-gen" failonerror="false"/>
+	<target name="all" depends="
+		clean,
+		hxs2vhdl,
+		hxs2c,
+		hxs2simstm,
+		hxs2python,
+		hxs2rst,
+		rst2html-sphinx,
+		rst2docbook,
+		docbook2pdf,
+		docbook2html
+		" description="compile all" />
+	
+	<target name="clean"  depends="-clean-docbook" description="Delete all previously generated result files">
+		<delete dir="tmp-gen" failonerror="false"/>
 		<delete dir="src-gen" failonerror="false"/>
 	</target>
 	
-	<target name="clean-docbook" description="Delete the target directory and copied sources">
+	<target name="-clean-docbook" description="Delete the target directory and copied sources">
 		<delete dir="${basedir}/eccelerators-docbook/target" />
 		<delete dir="${dir.docbook.xml}/resources" />
 	</target>
@@ -119,7 +132,7 @@
 		</copy>
 	</target>
 	
-	<target name="docbook2pdf" depends="-collect-sources-for-docbook-pdf-transformation, -XSL-FO" description="Generate a PDF file" >
+	<target name="docbook2pdf" depends="-clean-docbook, -collect-sources-for-docbook-pdf-transformation, -XSL-FO" description="Generate a PDF file" >
 		<delete dir="${eccelerators-book.outputfolder.pdf}" failonerror="false" />
 		<fop format="application/pdf" basedir="${dir.target}/xsl-fo" outdir="${dir.target}" force="true" messagelevel="verbose" throwexceptions="true" userconfig="${fop.user.configuration.file}" >
 			<fileset dir="${dir.target}">
@@ -134,27 +147,7 @@
 		<copy file="${dir.target}/${docbook.xml.filename}.pdf" tofile="${eccelerators-book.outputfolder.pdf}/${fo-gen.pdf.filename}" />
 	</target>
 	
-	<target name="pdf" description="Generate a PDF file" >
-		<fop format="application/pdf" basedir="${dir.target}/xsl-fo" outdir="${dir.target}" force="true" messagelevel="verbose" throwexceptions="true" userconfig="${fop.user.configuration.file}" >
-			<fileset dir="${dir.target}">
-				<include name="**/*.fo" />
-			</fileset>
-		</fop>
-		<move todir="${dir.target}">
-			<fileset dir="${dir.target}/xsl-fo">
-				<include name="**/*.pdf"/>
-			</fileset>
-		</move>
-		<copy todir="${eccelerators-book.outputfolder.pdf}" >
-			<fileset dir="${dir.docbook.xml}">
-				<include name="**/resources/**/*" />
-			</fileset>
-		</copy>
-
-		<copy file="${dir.target}/${docbook.xml.filename}.pdf" tofile="${eccelerators-book.outputfolder.pdf}/${fo-gen.pdf.filename}" />
-	</target>
-	
-	<target name="docbook2html" depends="clean-docbook, -collect-sources-for-docbook-transformation" description="Generate a HTML5 file" >
+	<target name="docbook2html" depends="-clean-docbook, -collect-sources-for-docbook-transformation" description="Generate a HTML5 file" >
 		<delete dir="${eccelerators-book.outputfolder.html}" />
 		<xslt style="${eccelerators-book.xsl.html5}" basedir="${dir.docbook.xml}" includes="**/${docbook.xml.file}" destdir="${dir.target}/html5" extension=".tmp" classpathref="classpath.xslt" force="true" >
 			<sysproperty key="xml.parsers.SAXParserFactory" value="org.apache.xerces.jaxp.SAXParserFactoryImpl" />
@@ -204,14 +197,6 @@
 		</copy>
 
 	</target>
-
-	<target name="all" depends="
-		hxs2html,
-		hxs2vhdl,
-		hxs2c,
-		hxs2simstm,
-		hxs2python
-		" description="compile all" />
 		
 	<target name="-prepare-sphinx-transformation" description="Prepare Sphinx project from template in tmp-gen folder">
 		<delete failonerror="false" includeemptydirs="true">
@@ -279,7 +264,7 @@
 		</copy>		
 	</target>
 	
-	<target name="rst2xml" depends="-collect-sources-for-sphinx-transformation" description="Build xml description from rst with Sphinx">	
+	<target name="-rst2xml" depends="-collect-sources-for-sphinx-transformation" description="Build xml description from rst with Sphinx">	
 	    <run_sphinx-xml />    
 		<copy todir="src-gen/xml-sphinx">
 			<fileset dir="tmp-gen/build">
@@ -354,12 +339,6 @@
 		</copy>
 	</target>
 	
-	<target name="hxs2html" depends="hxs2c, hxs2rst, rst2html-sphinx" description="Build html description from hxs description">
-	</target>
-	
-	<target name="hxs2pdf" depends="hxs2c, hxs2rst, rst2docbook, docbook2pdf" description="Build pdf description from hxs description">
-	</target>
-
 	<target name="hxs2rst" description="Build rst text description">
 		<run_hxsc out-dir="src-gen/rst" extension="docs" in-files="${HXS_FILES}" />
 		<delete failonerror="false">
@@ -389,6 +368,16 @@
 			</fileset>
 		</delete>
 	</target>
+	
+	<target name="hxs2ipxact" description="Build ipxact files">
+		<run_hxsc out-dir="src-gen/ipxact" extension="ipxact" in-files="${HXS_FILES}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/ipxact">
+				<include name="**/*" />
+				<exclude name="*${ant.project.name}*" />
+			</fileset>
+		</delete>
+	</target>
 
 	<target name="hxs2simstm" description="Build simstm files">
 		<run_hxsc out-dir="src-gen/simstm" extension="simstm" in-files="${HXS_FILES}" />
@@ -410,35 +399,6 @@
 		</delete>
 	</target>
 	
-	<target name="rst2latex" depends="-collect-sources-for-sphinx-transformation" description="Build html description from rst with Sphinx">	
-	    <run_sphinx_latex />   
-		<copy todir="src-gen/latex-sphinx">
-			<fileset dir="tmp-gen/build">
-				<include name="**/*" />
-			</fileset>
-		</copy>		
-	</target>
-
-	<target name="latex2pdf" description="Build rst text description">
-		<delete failonerror="false" includeemptydirs="true">
-			<fileset dir="src-gen/pdf">
-				<include name="**/*" />
-			</fileset>
-		</delete>
-		<exec executable="latexmk">
-			<arg value="-pdf" />
-			<arg value="-dvi-" />
-			<arg value="-ps-" />
-			<arg value="-cd" />
-			<arg value="src-gen/latex/${TEX_FILE}" />
-		</exec>
-		<copy todir="src-gen/pdf">
-			<fileset dir="src-gen/latex/">
-				<include name="**/*.pdf" />
-			</fileset>
-		</copy>
-	</target>
-
 	<macrodef name="run_hxsc">
 		<attribute name="out-dir" />
 		<attribute name="extension" />
@@ -500,38 +460,6 @@
 			<arg value="sphinx" />
 			<arg value="-b" />
 			<arg value="html" />
-			<arg value="tmp-gen/source" />
-			<arg value="tmp-gen/build" />
-		</exec>
-	</target>
-
-	<macrodef name="run_sphinx_latex">
-		<sequential>
-			<antcall target="-exec_sphinx_latex_python">
-			</antcall>
-		</sequential>
-	</macrodef>
-	<target name="-exec_sphinx_latex_python3" description="Execute command python3 -m sphinx">
-		<exec executable="python3" resultproperty="python3-exec-latex.state" failonerror="false">
-			<arg value="-m" />
-			<arg value="sphinx" />
-			<arg value="-b" />
-			<arg value="latex" />
-			<arg value="tmp-gen/source" />
-			<arg value="tmp-gen/build" />
-		</exec>	
-		<condition property="python3-exec-latex.failed">
-			<not>
-				<equals arg1="${python3-exec-latex.state}" arg2="0" />
-			</not>
-		</condition>
-	</target>
-	<target name="-exec_sphinx_latex_python" if="python3-exec-latex.failed" depends="-exec_sphinx_latex_python3" description="Execute command python3 -m sphinx">
-		<exec executable="python">
-			<arg value="-m" />
-			<arg value="sphinx" />
-			<arg value="-b" />
-			<arg value="latex" />
 			<arg value="tmp-gen/source" />
 			<arg value="tmp-gen/build" />
 		</exec>

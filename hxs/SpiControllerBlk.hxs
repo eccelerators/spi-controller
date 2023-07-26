@@ -55,14 +55,18 @@ namespace Eccelerators.Library.IP
 
 			SW-operation flow:
 			 
-			.. image:: resources/SwFlow.png
+			.. figure:: resources/SwFlow.png
+			   :scale: 9
+			   
+			   SW-operation flow
 			 
 			HW-operation flow:
 			 
-			.. image:: resources/HwFlow.png
-			 
-
-			 
+			.. figure:: resources/HwFlow.png
+			   :scale: 8
+			   
+			   HW-operation flow
+		 			 
 			";
 		BaseAddress = 0x0;
 		Size = 0x800;

@@ -29,10 +29,10 @@
 //******************************************************************************
 use Eccelerators.Library.Base.*;
 namespace Eccelerators.Library.IP
-{
-
+{  
 	@Generator('docs.file_type', 'ReStructured Text')
 	@Generator('c.header', 'structures')
+	@Generator('docs.file_header', 'none')
     interface SpiControllerIfc
 	{
 		Name = "Spi Controller Interface";
