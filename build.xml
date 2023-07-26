@@ -72,6 +72,7 @@
 		hxs2c,
 		hxs2simstm,
 		hxs2python,
+		hxs2ipxact,
 		hxs2rst,
 		rst2html-sphinx,
 		rst2docbook,
