@@ -10,6 +10,8 @@ Call the ant target 'all' of build.xml in . to run the hxs compiler to generate 
 
 Call the ant target 'all' of build.xml in the modelsim-<bus> to run modelsim
 
+![Ant targets screenshot](https://github.com/eccelerators/spi-controller/blob/main/README_ANT_TARGETS.png)
+
 # Prerequisites
 
 - java > 11
