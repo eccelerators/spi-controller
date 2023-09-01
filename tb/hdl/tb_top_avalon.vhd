@@ -78,7 +78,7 @@ begin
     Rst <= transport '0' after 100 ns;
     Clk <= transport (not Clk) and (not SimDone)  after 10 ns / 2; -- 100MHz
 
-    tb_FileIo_i : entity work.tb_fileio
+    tb_FileIo_i : entity work.tb_simstm
         generic map (
             stimulus_path => stimulus_path,
             stimulus_file => stimulus_file          
