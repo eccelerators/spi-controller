@@ -78,6 +78,8 @@
 	<target name="all" depends="
 		clean,
 		hxs2vhdl-wishbone,
+		hxs2vhdl-avalon,
+		hxs2vhdl-axi4lite,
 		hxs2c,
 		hxs2simstm,
 		hxs2python,
@@ -363,8 +365,8 @@
 	
 	<target name="hxs2vhdl-wishbone" description="Build vhdl files">
 		<mkdir dir="src-gen/vhdl/wishbone"/>
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen_par="vhdl.bus_type=wishbone" in-files="${HXS_FILES}" />
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen_par="vhdl.bus_type=wishbone" in-files="${HXS_FILES_1}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen-par="vhdl.bus_type=wishbone" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen-par="vhdl.bus_type=wishbone" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/vhdl">
 				<include name="**/*" />
@@ -376,8 +378,8 @@
 
 	<target name="hxs2vhdl-avalon" description="Build vhdl files">
 		<mkdir dir="src-gen/vhdl/avalon"/>
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen_par="vhdl.bus_type=avalon" in-files="${HXS_FILES}" />
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen_par="vhdl.bus_type=avalon" in-files="${HXS_FILES_1}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen-par="vhdl.bus_type=avalon" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen-par="vhdl.bus_type=avalon" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/vhdl">
 				<include name="**/*" />
@@ -389,8 +391,8 @@
 		
 	<target name="hxs2vhdl-axi4lite" description="Build vhdl files">
 		<mkdir dir="src-gen/vhdl/axi4lite"/>
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen_par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES}" />
-		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen_par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES_1}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen-par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen-par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/vhdl">
 				<include name="**/*" />
@@ -491,13 +493,13 @@
 			<antcall target="-exec_hxsc_lin_gen_par">
 				<param name="out-dir" value="@{out-dir}" />
 				<param name="extension" value="@{extension}" />
-				<param name="vhdl-bus-type" value="@{gen-par}" />
+				<param name="gen-par" value="@{gen-par}" />
 				<param name="in-files" value="@{in-files}" />
 			</antcall>
 			<antcall target="-exec_hxsc_win_gen_par">
 				<param name="out-dir" value="@{out-dir}" />
 				<param name="extension" value="@{extension}" />
-				<param name="vhdl-bus-type" value="@{gen-par}" />
+				<param name="gen-par" value="@{gen-par}" />
 				<param name="in-files" value="@{in-files}" />
 			</antcall>
 		</sequential>

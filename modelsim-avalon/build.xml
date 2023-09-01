@@ -7,7 +7,7 @@
    <property name="MODELSIM_LIBRARIES_DIR" value="${MODELSIM_RUN_DIR}/libraries"/>
    <property name="TOP_LEVEL_NAME" value="work.tb_top_avalon"/>
    
-   <target name="MakeLibWork" description="make work lib">
+   <target name="MakeLib" description="make work lib">
       <mkdir dir="${MODELSIM_LIBRARIES_DIR}"/>
       <exec executable="${MODELSIM_BIN_DIR}/vlib" failonerror="true">
          <arg value="${MODELSIM_LIBRARIES_DIR}/work"/>
@@ -30,7 +30,15 @@
       </delete>
    </target>
    
-   <target name="All" depends="
+   	<target name="all" depends="
+		CleanLib,
+		MakeLib,
+		Compile,
+		Elaborate
+		" description="compile all" />
+   
+   
+   <target name="Compile" depends="
      -do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v,
      -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_wishbone.vhd,
@@ -50,7 +58,7 @@
      -do_compile_tb_hdl__tb_top_avalon.vhd"
          description="CompileAll"/>
          
-   <target name="Elab" description="ElabLinux">
+   <target name="Elaborate" description="ElabLinux">
       <exec executable="${MODELSIM_BIN_DIR}/vsim">
          <arg value="-t"/>
          <arg value="ps"/>
