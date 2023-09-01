@@ -7,3 +7,6 @@
 [submodule "sphinx_docbook"]
 	path = sphinx_docbook
 	url = git@github.com:eccelerators/sphinx_docbook.git
+[submodule "tb-ip/hdl/Eccelerators/simstm"]
+	path = tb-ip/hdl/Eccelerators/simstm
+	url = git@github.com:eccelerators/simstm.git
