@@ -12,7 +12,16 @@
 		hxs/bases/UsualObjects.hxs 
 		hxs/bases/DoubleBufferControllerBlk.hxs 
 		hxs/SpiControllerBlk.hxs 
-		hxs/${ant.project.name}.hxs" 
+		hxs/${ant.project.name}.hxs	
+		" 		
+	/>
+	
+	<property name="HXS_FILES_1"
+		value="
+		hxs/bases/UsualObjects.hxs
+		hxs/CellBufferBlk.hxs
+		hxs/CellBufferIfc.hxs		
+		" 		
 	/>
 	<property name="copyright" value="2023, Eccelerators GmbH" />
 	<property name="author" value="Eccelerators GmbH" />
@@ -68,7 +77,7 @@
 	
 	<target name="all" depends="
 		clean,
-		hxs2vhdl,
+		hxs2vhdl-wishbone,
 		hxs2c,
 		hxs2simstm,
 		hxs2python,
@@ -342,60 +351,99 @@
 	
 	<target name="hxs2rst" description="Build rst text description">
 		<run_hxsc out-dir="src-gen/rst" extension="docs" in-files="${HXS_FILES}" />
+		<run_hxsc out-dir="src-gen/rst" extension="docs" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/rst">
 				<include name="**/*" />
+				<exclude name="*CellBufferIfc*" />
 				<exclude name="*${ant.project.name}*" />
 			</fileset>
 		</delete>
 	</target>
-
-	<target name="hxs2vhdl" description="Build vhdl files">
-		<run_hxsc out-dir="src-gen/vhdl" extension="vhdl" in-files="${HXS_FILES}" />
+	
+	<target name="hxs2vhdl-wishbone" description="Build vhdl files">
+		<mkdir dir="src-gen/vhdl/wishbone"/>
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen_par="vhdl.bus_type=wishbone" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/wishbone" extension="vhdl" gen_par="vhdl.bus_type=wishbone" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/vhdl">
 				<include name="**/*" />
-				<exclude name="*${ant.project.name}*" />
+				<exclude name="**/*${ant.project.name}*" />
+				<exclude name="**/*CellBufferIfc*" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="hxs2vhdl-avalon" description="Build vhdl files">
+		<mkdir dir="src-gen/vhdl/avalon"/>
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen_par="vhdl.bus_type=avalon" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/avalon" extension="vhdl" gen_par="vhdl.bus_type=avalon" in-files="${HXS_FILES_1}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/vhdl">
+				<include name="**/*" />
+				<exclude name="**/*${ant.project.name}*" />
+				<exclude name="**/*CellBufferIfc*" />
+			</fileset>
+		</delete>
+	</target>
+		
+	<target name="hxs2vhdl-axi4lite" description="Build vhdl files">
+		<mkdir dir="src-gen/vhdl/axi4lite"/>
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen_par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES}" />
+		<run_hxsc_gen_par out-dir="src-gen/vhdl/axi4lite" extension="vhdl" gen_par="vhdl.bus_type=axi4lite" in-files="${HXS_FILES_1}" />
+		<delete failonerror="false">
+			<fileset dir="src-gen/vhdl">
+				<include name="**/*" />
+				<exclude name="**/*${ant.project.name}*" />
+				<exclude name="**/*CellBufferIfc*" />
 			</fileset>
 		</delete>
 	</target>
 
 	<target name="hxs2c" description="Build c files">
 		<run_hxsc out-dir="src-gen/c" extension="c" in-files="${HXS_FILES}" />
+		<run_hxsc out-dir="src-gen/c" extension="c" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/c">
 				<include name="**/*" />
 				<exclude name="*${ant.project.name}*" />
+				<exclude name="*CellBufferIfc*" />
 			</fileset>
 		</delete>
 	</target>
 	
 	<target name="hxs2ipxact" description="Build ipxact files">
 		<run_hxsc out-dir="src-gen/ipxact" extension="ipxact" in-files="${HXS_FILES}" />
+		<run_hxsc out-dir="src-gen/ipxact" extension="ipxact" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/ipxact">
 				<include name="**/*" />
 				<exclude name="*${ant.project.name}*" />
+				<exclude name="*CellBufferIfc*" />
 			</fileset>
 		</delete>
 	</target>
 
 	<target name="hxs2simstm" description="Build simstm files">
 		<run_hxsc out-dir="src-gen/simstm" extension="simstm" in-files="${HXS_FILES}" />
+		<run_hxsc out-dir="src-gen/simstm" extension="simstm" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/simstm">
 				<include name="**/*" />
 				<exclude name="*${ant.project.name}*" />
+				<exclude name="*CellBufferIfc*" />
 			</fileset>
 		</delete>
 	</target>
 
 	<target name="hxs2python" description="Build python files">
 		<run_hxsc out-dir="src-gen/python" extension="python" in-files="${HXS_FILES}" />
+		<run_hxsc out-dir="src-gen/python" extension="python" in-files="${HXS_FILES_1}" />
 		<delete failonerror="false">
 			<fileset dir="src-gen/python">
 				<include name="**/*" />
 				<exclude name="*${ant.project.name}*" />
+				<exclude name="*CellBufferIfc*" />
 			</fileset>
 		</delete>
 	</target>
@@ -427,6 +475,47 @@
 	</target>
 	<target name="-exec_hxsc_lin" description="Execute HxS compiler on windows" unless="is_windows">
 		<exec executable="hxsc">
+			<arg value="--out-dir" />
+			<arg value="${out-dir}" />
+			<arg value="${extension}" />
+			<arg value="${in-files}" />
+		</exec>
+	</target>
+	
+	<macrodef name="run_hxsc_gen_par">
+		<attribute name="out-dir" />
+		<attribute name="extension" />
+		<attribute name="gen-par" />
+		<attribute name="in-files" />
+		<sequential>
+			<antcall target="-exec_hxsc_lin_gen_par">
+				<param name="out-dir" value="@{out-dir}" />
+				<param name="extension" value="@{extension}" />
+				<param name="vhdl-bus-type" value="@{gen-par}" />
+				<param name="in-files" value="@{in-files}" />
+			</antcall>
+			<antcall target="-exec_hxsc_win_gen_par">
+				<param name="out-dir" value="@{out-dir}" />
+				<param name="extension" value="@{extension}" />
+				<param name="vhdl-bus-type" value="@{gen-par}" />
+				<param name="in-files" value="@{in-files}" />
+			</antcall>
+		</sequential>
+	</macrodef>
+	<target name="-exec_hxsc_win_gen_par" description="Execute HxS compiler on windows" if="is_windows">
+		<exec executable="hxsc.bat">
+			<arg value="--generator" />
+			<arg value="${gen-par}" />
+			<arg value="--out-dir" />
+			<arg value="${out-dir}" />
+			<arg value="${extension}" />
+			<arg line="${in-files}" />
+		</exec>
+	</target>
+	<target name="-exec_hxsc_lin_gen_par" description="Execute HxS compiler on windows" unless="is_windows">
+		<exec executable="hxsc">
+			<arg value="--generator" />
+			<arg value="${gen-par}" />
 			<arg value="--out-dir" />
 			<arg value="${out-dir}" />
 			<arg value="${extension}" />

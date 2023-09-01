@@ -1,0 +1,79 @@
+-- ******************************************************************************
+-- 
+--                   /------o
+--             eccelerators
+--          o------/
+-- 
+--  This file is an Eccelerators GmbH sample project.
+-- 
+--  MIT License:
+--  Copyright (c) 2023 Eccelerators GmbH
+-- 
+--  Permission is hereby granted, free of charge, to any person obtaining a copy
+--  of this software and associated documentation files (the "Software"), to deal
+--  in the Software without restriction, including without limitation the rights
+--  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--  copies of the Software, and to permit persons to whom the Software is
+--  furnished to do so, subject to the following conditions:
+-- 
+--  The above copyright notice and this permission notice shall be included in all
+--  copies or substantial portions of the Software.
+-- 
+--  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+--  SOFTWARE.
+-- ******************************************************************************
+
+    -- global
+		-- var CmdAddress from Cmd.stm
+		-- var CmdBus from Cmd.stm
+   -- parameter
+    var CmdTransceivePacketMultiplierVal 0
+    var CmdTransceivePacketLengthVal 0
+    -- intern
+    var CmdTransceiveTmp0 0
+
+setCmdTransceivePacketMultiplierVal:
+proc
+	equ CmdTransceiveTmp0 $CmdTransceivePacketMultiplierVal
+	shl CmdTransceiveTmp0 $CmdTransceiveCell_PacketMultiplierPosition
+    equ ReadModifyWriteAdr32 $CmdAddress
+    equ ReadModifyWriteMask32 $CmdTransceiveCell_PacketMultiplierMask
+    or ReadModifyWriteMask32 $CmdTransceiveCell_CmdTransceiveCellIdMask
+    equ ReadModifyWriteData32 $CmdTransceiveTmp0	
+    or ReadModifyWriteData32 $CmdTransceiveCell_TransceiveCellIdMVal
+	call $readModifyWrite32
+end proc
+
+getCmdTransceivePacketMultiplierVal:
+proc
+	bus read $CmdBus 32 $CmdAddress CmdTransceiveTmp0
+	and CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthMask
+	shr CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthPosition
+	equ CmdTransceivePacketMultiplierVal $CmdTransceiveTmp0
+end proc
+
+setCmdTransceivePacketLengthVal:
+proc
+	equ CmdTransceiveTmp0 $CmdTransceivePacketLengthVal
+	shl CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthPosition
+    equ ReadModifyWriteAdr32 $CmdAddress
+    equ ReadModifyWriteMask32 $CmdTransceiveCell_PacketLengthMask
+    or ReadModifyWriteMask32 $CmdTransceiveCell_CmdTransceiveCellIdMask
+    equ ReadModifyWriteData32 $CmdTransceiveTmp0	
+    or ReadModifyWriteData32 $CmdTransceiveCell_TransceiveCellIdMVal
+	call $readModifyWrite32
+end proc
+
+getCmdTransceivePacketLengthVal:
+proc
+	bus read $CmdBus 32 $CmdAddress CmdTransceiveTmp0
+	and CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthMask
+	shr CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthPosition
+	equ CmdTransceivePacketLengthVal $CmdTransceiveTmp0
+end proc
+

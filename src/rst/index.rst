@@ -7,6 +7,8 @@ Welcome to SpiController's documentation!
 
 
    Eccelerators.Library.IP.SpiControllerIfc-composite
+   Eccelerators.Library.IP.CellBufferIfc-composite
+
 
 
 Indices and tables

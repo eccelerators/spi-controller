@@ -1,0 +1,23 @@
+    -- global
+		-- var CmdAddress from Cmd.stm
+		-- var CmdBus from Cmd.stm
+   -- parameter
+    var CmdForLoopForLoopCountVal 0
+    -- intern
+    var CmdForLoopTmp0 0
+
+setCmdForLoopForLoopCountVal:
+proc
+	equ CmdForLoopTmp0 $CmdForLoopForLoopCountVal
+	shl CmdForLoopTmp0 $CmdForLoopCell_CmdForLoopCellIdPosition
+	or CmdForLoopTmp0 $CmdForLoopCell_ForLoopCellIdMVal
+	bus write $CmdBus 32 $CmdAddress $CmdForLoopTmp0
+end proc
+
+getCmdForLoopForLoopCountVal:
+proc
+	bus read $CmdBus 32 $CmdAddress CmdForLoopTmp0
+	and CmdForLoopTmp0 $CmdForLoopCell_ForLoopCountMask
+	shr CmdForLoopTmp0 $CmdForLoopCell_CmdForLoopCellIdPosition
+	equ CmdForLoopForLoopCountVal $CmdForLoopTmp0
+end proc

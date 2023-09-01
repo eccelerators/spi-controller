@@ -1,0 +1,71 @@
+//******************************************************************************
+//
+//                  /------o
+//            eccelerators
+//         o------/
+//
+// This file is an Eccelerators GmbH sample project.
+//
+// MIT License:
+// Copyright (c) 2023 Eccelerators GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//******************************************************************************
+use Eccelerators.Library.Base.*;
+namespace Eccelerators.Library.IP
+{
+	@Generator('docs.file_type', 'ReStructured Text')
+	@Generator('c.header', 'structures')
+	@Generator('docs.file_header', 'none')
+	interface CellBufferIfc {
+		Name = "Cell Buffer Interface";
+		Description = "
+		The CellBuffer interface is virtually connected to the CellBuffer delegated port of the SpiController interface bus. 
+		Actually a RAM is connected to the delegated port of the SpiController interface bus. The contents of the RAM are
+		described by registers within the following CellBufferBlk. 
+		
+		The generated bus realization of the CellBufferIfc e.g. wishbone, avalon or axi-lite is unused.
+		
+		«CellBufferIfc.Link_Substitutions.Description»	
+		
+		";
+		AddressBusWidth = 16;
+		DataBusWidth = 32; 
+		Blocks = [ CellBufferBlk ];
+		
+		object Link_Substitutions
+		{
+			Description = "
+						
+			.. |.blkCellBffr....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»<###
+			.. |.regCmdCfg....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdConfigCell.Id»<###
+			.. |.regCmdTrm....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdTransmitCell.Id»<###
+			.. |.regCmdTrcv....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdTransceiveCell.Id»<###
+			.. |.regCmdGoto....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdGotoCell.Id»<###
+			.. |.datForCnt....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdForLoopCell.Id»/bit:«CellBufferBlk.CmdForLoopCell.ForLoopCount.Id»<###
+
+			.. |.AddrToGt....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdEndCell.Id»/bit:«CellBufferBlk.CmdEndCell.AddressToGoto.Id»<###	
+			.. |.AutRstrt....| replace:: ###>ifc:«CellBufferIfc.Id»/blk:«CellBufferBlk.Id»/fld:«CellBufferBlk.CmdEndCell.Id»/bit:«CellBufferBlk.CmdEndCell.AutoRestart.Id»<###
+			
+			";
+		}	
+	
+	}
+	
+}

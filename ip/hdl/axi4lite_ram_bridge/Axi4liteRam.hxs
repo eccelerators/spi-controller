@@ -1,0 +1,26 @@
+use Eccelerators.Library.Base.*;
+namespace Eccelerators.Library.IP
+{
+	interface RamIfc {
+		Blocks = [RamBlk];
+		AddressBusWidth = 11;
+		DataBusWidth = 32;
+		
+		block RamBlk {
+			BaseAddress = 0;
+			Size = 0x800;
+			Registers = [RamBlk.Ram];
+			register Ram {
+				WriteRegisterPulse = true;
+				ReadTransparentPulse = true;
+				WriteExternalAck = true;
+				ReadExternalAck = true;
+				Bits = [RamBlk.Ram.Data];
+				data Data {
+					Width = 32;
+					Behaviour = BitBehaviour.ReadTransparentWriteRegister;
+				}		
+			}
+		}
+	}
+}

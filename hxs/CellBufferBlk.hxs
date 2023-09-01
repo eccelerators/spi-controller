@@ -1,0 +1,434 @@
+//******************************************************************************
+//
+//                  /------o
+//            eccelerators
+//         o------/
+//
+// This file is an Eccelerators GmbH sample project.
+//
+// MIT License:
+// Copyright (c) 2023 Eccelerators GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//******************************************************************************
+use Eccelerators.Library.Base.*;
+namespace Eccelerators.Library.IP
+{
+	
+    @Generator ('c.structures.register-type-union', 'T_Cell')
+    @Generator ('c.structures.block-type-trailing-pad', 'skip')
+	block CellBufferBlk {
+		Name = "CellBuffer Block";
+		Description = "
+		The CellBuffer block describes the registers placed within a RAM connected to the CellBuffer delegated port
+		of the SpiController interface bus. 
+		
+		Each register describes a possible CmdCell, TransmitDataCell or ReceiveDataCell. Except the 
+		CmdConfigCell and the ReceiveDataCell the cells can be place at every 4 byte aligned address in the CellBuffer RAM. 
+		
+		";
+		BaseAddress = 0x0;
+		Size = 0x400;
+		Registers = [
+			CellBufferBlk.CmdConfigCell(Offset=0x000),
+			CellBufferBlk.CmdSetCell(Offset=0x000),
+			CellBufferBlk.CmdTransmitCell(Offset=0x000),
+			CellBufferBlk.CmdTransceiveCell(Offset=0x000),
+			CellBufferBlk.CmdWaitCell(Offset=0x000),
+			CellBufferBlk.CmdGotoCell(Offset=0x000),
+			CellBufferBlk.CmdForLoopCell(Offset=0x000),
+			CellBufferBlk.CmdEndCell(Offset=0x000),
+			CellBufferBlk.TransmitDataCell(Offset=0x000),
+			CellBufferBlk.ReceiveDataCell(Offset=0x000)
+		];
+		
+		@Generator ('c.structures.presence', 'skip')
+		delegate CellBuffer {
+			Name = "Cell Buffer";
+			Description = "Buffer memory to hold the cells of 4 bytes each of a controller frame.";
+			Size = 0x400;
+		}
+		register CmdCell {
+			Description = "
+				Command cell, can be placed at each 4 byte aligned address in |.blkCellBffr....|
+				«CellBufferBlk.CmdCell.UnusedCmdCellBits.Description »
+				";
+			Width = 32;
+			
+			object UnusedCmdCellBits {
+				Description = "Unused bits can be written with any value, the written value is read back due to the RAM nature of the cells.";			
+			}
+
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.register-replace-by-array', 'T_Cell Cell[0x100]')
+		register CmdConfigCell : CmdCell {
+			Name = "Command Config Cell";
+			Description = "
+				Command cell, must be placed start of |.blkCellBffr....|
+				«CellBufferBlk.CmdCell.UnusedCmdCellBits.Description »
+				";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdConfigCell.ReceiveFrameStartAddress(Position = 19),
+				CellBufferBlk.CmdConfigCell.CmdConfigCellId
+			];
+			
+			data ReceiveFrameStartAddress {
+				Width = 9;
+				Name = "Receive Frame Start Address";
+				Description = "
+					Sets the receive frame start byte address in a buffer,
+					the lower 2 bits must be '0'.";
+				Resets = [BusReset.None];
+			}
+			
+			enum CmdConfigCellId {
+				Width = 4;
+				Values = [
+					value ConfigCellId
+					{
+						Value = 0x0;
+						Description = "Command to partiton a buffer.";
+					}
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdSetCell : CmdCell {
+			Name = "Command Set Cell";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdSetCell.ClkPeriod(Position = 12),
+				CellBufferBlk.CmdSetCell.ClkPhase,
+				CellBufferBlk.CmdSetCell.ClkPolarity,
+				CellBufferBlk.CmdSetCell.ChipSelect,
+				CellBufferBlk.CmdSetCell.CmdSetCellId
+			];
+			
+			data ClkPeriod {
+				Width = 10;
+				Name = "Clock Period in ns";
+				Resets = [BusReset.None];
+			}
+			
+			enum ClkPhase {
+				Width = 1;
+				Name = "Clock Phase(CPHA)";
+				Values = [		
+					value Second
+					{
+						Value = 0b1;
+						Description = "Sample MiSo with second clock edge after chip select has been activated.";
+					},		
+					value First
+					{
+						Value = 0b0;
+						Description = "Sample MiSo with first clock edge after chip select has been activated.";
+					}
+				];
+				Resets = [BusReset.None];
+			}	
+					
+			enum ClkPolarity {
+				Width = 1;
+				Name = "Clock Polarity(CPOL)";
+				Values = [				
+					value High
+					{
+						Value = 0b1;
+						Description = "SCK is high when idle.";
+					},
+					value Low
+					{
+						Value = 0b0;
+						Description = "SCK is low when idle.";
+					}
+				];
+				Resets = [BusReset.None];
+			}			
+			
+			data ChipSelect {
+				Width = 4;
+				Name = "Chip Select";
+				Description = "Sets an active chip select, 15 = no Cs, 0 = Cs0, 1=Cs1, ... 14=Cs14";
+				Resets = [BusReset.None];
+			}
+				
+			enum CmdSetCellId {
+				Width = 4;
+				Values = [
+					value SetCellId
+					{
+						Value = 0x1;
+						Description = "Command to set basic parameters for the following transfers.";
+					}	
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdTransmitCell : CmdCell
+		{
+			Name = "Command Transmit Cell";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdTransmitCell.PacketLength(Position = 10),
+				CellBufferBlk.CmdTransmitCell.PacketMultiplier,
+				CellBufferBlk.CmdTransmitCell.CmdTransmitCellId
+			];
+			
+			data PacketLength {
+				Width = 9;
+				Name = "Length of data packet in bytes";
+				Resets = [BusReset.None];
+			}
+		
+			data PacketMultiplier {
+				Width = 9;
+				Name = "Multiplier for repetition of the data packet, 0 = no data is sent, 1 = one time, n = n times";
+				Resets = [BusReset.None];
+			}
+			
+			enum CmdTransmitCellId {
+				Width = 4;
+				Values = [
+					value TransmitCellId
+					{
+						Value = 0x2;
+						Description = "Command to transmit the following data packet without recording receive data.";
+					}
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdTransceiveCell : CmdCell {
+			Name = "Command Tranceive Cell";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdTransmitCell.PacketLength(Position = 10),
+				CellBufferBlk.CmdTransmitCell.PacketMultiplier,
+				CellBufferBlk.CmdTransceiveCell.CmdTransceiveCellId
+			];
+			
+			enum CmdTransceiveCellId {
+				Width = 4;
+				Values = [
+					value TransceiveCellId
+					{
+						Value = 0x3;
+						Description = "Command to transmit the following data packet and record receive data.";
+					}
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdWaitCell : CmdCell {
+			Name = "Command Wait Cell";
+			Width = 32;
+			Bits = [				
+				CellBufferBlk.CmdWaitCell.WaitNs(Position = 12),
+				CellBufferBlk.CmdWaitCell.CmdWaitCellId
+			];
+			
+			data WaitNs {
+				Width = 16;
+				Name = "Wait for a time in ns";
+	            Resets = [BusReset.None];
+			}
+			
+			enum CmdWaitCellId {
+				Width = 4;
+				Values = [
+					value WaitCellId
+					{
+						Value = 0x4;
+						Description = "Command to wait for a time.";
+					}						
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdGotoCell : CmdCell
+		{
+			Name = "Command Goto Cell";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdEndCell.AddressToGoto(Position = 19),
+				CellBufferBlk.CmdGotoCell.CmdGotoCellId				
+			];		
+
+			enum CmdGotoCellId {
+				Width = 4;
+				Values = [
+					value GotoCellId
+					{
+						Value = 0x5;
+						Description = "Command to jump to another command at an address in a buffer.";
+					}					
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdForLoopCell : CmdCell {
+			Name = "Command For Loop Cell";
+			Description = "
+				When this command is executed it first checks if |.datForCnt....| is 0.
+				 
+				If it is not 0 it branches execution to the next immediately following command e.g. |.regCmdGoto....| in the frame and decrements
+				the value in |.datForCnt....|.
+				 
+				Otherwise it branches execution to the after next command.
+				";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdForLoopCell.ForLoopCount(Position = 20),
+				CellBufferBlk.CmdForLoopCell.CmdForLoopCellId
+			];
+			
+			data ForLoopCount {
+				Width = 8;
+				Name = "For Loop Count";
+				Description = "Number of times a for loop is run.";
+			    Resets = [BusReset.None];
+			}
+				
+			enum CmdForLoopCellId {
+				Width = 4;
+				Values = [
+					value ForLoopCellId
+					{
+						Value = 0x6;
+						Description = "Command to run a for loop.";
+					}				
+				];
+				Resets = [BusReset.None];
+			}
+		}
+		
+
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register CmdEndCell : CmdCell
+		{
+			Name = "Command End Cell";
+			Width = 32;
+			Bits = [
+				CellBufferBlk.CmdEndCell.AddressToGoto(Position = 18),
+				CellBufferBlk.CmdEndCell.AutoRestart,
+				CellBufferBlk.CmdEndCell.CmdEndCellId
+			];
+			data AddressToGoto {
+				Width = 9;
+				Name = "Address to Goto";
+				Description = "
+							Sets address to goto in a buffer,
+							the lower 2 bits must be '0'.";
+				Resets = [BusReset.None];
+			}
+			enum AutoRestart {
+				Width = 1;
+				Values = [
+					value Restarting
+					{
+						Value = 0b1;
+						Description = "
+							Command end doesn't end HW processing of the current buffer but restarts at |.AddrToGt....| address, unless
+				            a new buffer is prepared, then it switches to  the new buffer exactly at this place.";
+					},
+					
+					value NotRestarting
+					{
+						Value = 0b0;
+						Description = "Command end ends HW processing of the current buffer and waits for a new buffer.";
+					}									
+				];
+				Resets = [BusReset.None];
+			}				
+			enum CmdEndCellId {
+				Width = 4;
+				Values = [
+					value EndCellId
+					{
+						Value = 0x7;
+						Description = "Command frame end.";
+					}					
+				];
+				Resets = [BusReset.None];
+			}		
+		}
+		
+
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register TransmitDataCell 
+		{
+			Name = "Transmit Data Cell";
+			Description = "
+				Transmit data bytes attached to preceeding |.regCmdTrm....| or |.regCmdTrcv....| cells.
+				";
+			Width = 32;
+			Bits = [CellBufferBlk.TransmitDataCell.TransmitData];
+			
+			data TransmitData {
+				Description = "Transmit data bytes, 4 bytes, byte at lowest address sent first, bit 0 sent first.";
+				Width = 32;
+				Resets = [BusReset.None];
+			}	
+		}
+		
+		@Generator ('c.structures.register-type-union-member', 'T_Cell')
+		@Generator ('c.structures.presence', 'skip')
+		register ReceiveDataCell {
+			Name = "Receive Data Cell";
+			Description = "
+				Received data bytes as requested by tranceive command and data sequences,
+				starting at |.blkCellBffr....| start address given by |.regCmdCfg....|.
+				";
+			Width = 32;
+			Bits = [CellBufferBlk.ReceiveDataCell.ReceiveData];
+			
+			data ReceiveData {
+				Description = "Receive data bytes, 4 bytes, byte at lowest address sent first, bit 0 sent first.";
+				Width = 32;
+				Resets = [BusReset.None];
+			}
+		}
+						
+	}
+	
+}

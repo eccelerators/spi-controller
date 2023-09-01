@@ -6,5 +6,6 @@
 <chapter id="Eccelerators-Library-IP-SpiControllerIfc-composite">
 <title>SpiControllerIfc</title>
 <xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="Eccelerators.Library.IP.SpiControllerIfc-composite.xml" />
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"  href="Eccelerators.Library.IP.CellBufferIfc-composite.xml" />
 </chapter>
 </book>

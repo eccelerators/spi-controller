@@ -1,0 +1,186 @@
+<?xml version="1.0" ?>
+<project name="SpiControllerModelSim-axi4lite">
+   <property environment="env"/>
+   <property name="MODELSIM_BIN_DIR" value="/opt/intelFPGA/20.1/modelsim_ase/bin"/>
+   <property name="ROOT_DIR" value="./../"/>
+   <property name="MODELSIM_RUN_DIR" value="${ROOT_DIR}/modelsim-axi4lite"/>
+   <property name="MODELSIM_LIBRARIES_DIR" value="${MODELSIM_RUN_DIR}/libraries"/>
+   <property name="TOP_LEVEL_NAME" value="work.tb_top_axi4lite"/>
+   
+   <target name="MakeLibWork" description="make work lib">
+      <mkdir dir="${MODELSIM_LIBRARIES_DIR}"/>
+      <exec executable="${MODELSIM_BIN_DIR}/vlib" failonerror="true">
+         <arg value="${MODELSIM_LIBRARIES_DIR}/work"/>
+      </exec>
+      <exec executable="${MODELSIM_BIN_DIR}/vmap" failonerror="true">
+         <arg value="work"/>
+         <arg value="${MODELSIM_LIBRARIES_DIR}/work"/>
+      </exec>
+      <exec executable="${MODELSIM_BIN_DIR}/vmap" failonerror="true">
+         <arg value="work_lib"/>
+         <arg value="${MODELSIM_LIBRARIES_DIR}/work"/>
+      </exec>
+   </target>
+   
+   <target name="CleanLib" description="clean libs">
+      <delete>
+         <fileset dir="${MODELSIM_LIBRARIES_DIR}/work">
+            <include name="**/*"/>
+         </fileset>
+      </delete>
+   </target>
+   
+   <target name="All" depends="
+     -do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v,
+     -do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcPackage.vhd,
+     -do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcAxi4Lite.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_wishbone.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_avalonmm.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_axi4lite.vhd, 
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_signals.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_fileio.vhd,
+     -do_compile_src-gen_vhdl_axi4lite__SpiControllerIfcPackage.vhd,
+     -do_compile_src-gen_vhdl_axi4lite__SpiControllerIfcAxi4Lite.vhd,
+     -do_compile_src-gen_vhdl_axi4lite__CellBufferIfcPackage.vhd,
+     -do_compile_ip_hdl_generic__Ram.vhd,
+     -do_compile_src_vhdl__DoubleBuffer.vhd,
+     -do_compile_src_vhdl__CmdProcessor.vhd,
+     -do_compile_src_vhdl__Phy.vhd,
+     -do_compile_src_vhdl__SpiControllerWithAxi4LiteBus.vhd,
+     -do_compile_tb_hdl__tb_top_axi4lite.vhd"
+         description="CompileAll"/>
+         
+   <target name="Elab" description="ElabLinux">
+      <exec executable="${MODELSIM_BIN_DIR}/vsim">
+         <arg value="-t"/>
+         <arg value="ps"/>
+         <arg value="-L"/>
+         <arg value="work"/>
+         <arg value="${TOP_LEVEL_NAME}"/>
+         <arg value="-i"/>
+      </exec>
+   </target>
+   
+   <target name="-do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v" description="compile W25Q128JVxIM.v">
+      <exec executable="${MODELSIM_BIN_DIR}/vlog" failonerror="true">
+         <arg value="./../tb-ip/hdl/Winbond/W25Q128JVxIM/W25Q128JVxIM.v"/>
+      </exec>
+   </target>
+   <target name="-do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcPackage.vhd" description="compile RamIfcPackage.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../ip/hdl/axi4lite_ram_bridge/RamIfcPackage.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcAxi4Lite.vhd" description="compile RamIfcAxi4Lite.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../ip/hdl/axi4lite_ram_bridge/RamIfcAxi4Lite.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg.vhd" description="compile tb_pkg.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_wishbone.vhd" description="compile tb_pkg_bus_wishbone.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg_bus_wishbone.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_avalonmm.vhd" description="compile tb_pkg_bus_avalonmm.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg_bus_avalonmm.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus_axi4lite.vhd" description="compile tb_tb_pkg_bus_axi4lite.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg_bus_axi4lite.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_bus.vhd" description="compile tb_pkg_bus.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg_bus.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_pkg_signals.vhd" description="compile tb_pkg_signals.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_pkg_signals.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm-tb_src__tb_fileio.vhd" description="compile tb_fileio.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm-tb/src/tb_fileio.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src-gen_vhdl_axi4lite__SpiControllerIfcAxi4Lite.vhd" description="compile SpiControllerIfcAxi4Lite.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src-gen/vhdl/axi4lite/SpiControllerIfcAxi4Lite.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src-gen_vhdl_axi4lite__SpiControllerIfcPackage.vhd" description="compile SpiControllerIfcPackage.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src-gen/vhdl/axi4lite/SpiControllerIfcPackage.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src-gen_vhdl_axi4lite__CellBufferIfcPackage.vhd" description="compile CellBufferIfcPackage.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src-gen/vhdl/axi4lite/CellBufferIfcPackage.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src_vhdl__SpiControllerWithAxi4LiteBus.vhd" description="compile SpiControllerWithAxi4LiteBus.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src/vhdl/SpiControllerWithAxi4LiteBus.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src_vhdl__DoubleBuffer.vhd" description="compile DoubleBuffer.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src/vhdl/DoubleBuffer.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src_vhdl__CmdProcessor.vhd" description="compile CmdProcessor.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src/vhdl/CmdProcessor.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_src_vhdl__Phy.vhd" description="compile Phy.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../src/vhdl/Phy.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_ip_hdl_generic__Ram.vhd" description="compile Ram.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../ip/hdl/generic/Ram.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb_hdl__tb_pkg_signals.vhd" description="compile tb_pkg_signals.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb/hdl/tb_pkg_signals.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb_hdl__tb_top_axi4lite.vhd" description="compile tb_top_axi4lite.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb/hdl/tb_top_axi4lite.vhd"/>
+      </exec>
+   </target>
+   
+</project>

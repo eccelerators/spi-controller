@@ -3,12 +3,12 @@
 	
     <target name="getHxsBases" description="Get HxS base files"> 
         <exec executable="curl" >
-        	<arg value="https://raw.githubusercontent.com/eccelerators/UsualObjects/1.0.0/hxs/UsualObjects.hxs"/>
+        	<arg value="https://raw.githubusercontent.com/eccelerators/usual-objects/1.0.0/hxs/UsualObjects.hxs"/>
         	<arg value="-o"/>
         	<arg value="./UsualObjects.hxs"/>
         </exec> 
         <exec executable="curl" >
-        	<arg value="https://raw.githubusercontent.com/eccelerators/DoubleBufferController/1.0.0/hxs/DoubleBufferControllerBlk.hxs"/>
+        	<arg value="https://raw.githubusercontent.com/eccelerators/double-buffer-controller/1.0.2/hxs/DoubleBufferControllerBlk.hxs"/>
         	<arg value="-o"/>
         	<arg value="./DoubleBufferControllerBlk.hxs"/>
         </exec> 

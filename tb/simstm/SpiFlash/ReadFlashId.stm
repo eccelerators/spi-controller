@@ -1,0 +1,149 @@
+-- ******************************************************************************
+-- 
+--                   /------o
+--             eccelerators
+--          o------/
+-- 
+--  This file is an Eccelerators GmbH sample project.
+-- 
+--  MIT License:
+--  Copyright (c) 2023 Eccelerators GmbH
+-- 
+--  Permission is hereby granted, free of charge, to any person obtaining a copy
+--  of this software and associated documentation files (the "Software"), to deal
+--  in the Software without restriction, including without limitation the rights
+--  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--  copies of the Software, and to permit persons to whom the Software is
+--  furnished to do so, subject to the following conditions:
+-- 
+--  The above copyright notice and this permission notice shall be included in all
+--  copies or substantial portions of the Software.
+-- 
+--  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+--  SOFTWARE.
+-- ******************************************************************************
+
+    -- global
+		-- var CmdAddress from Cmd.stm
+		-- var SpiFlashBus from Cmd.stm
+    -- parameter variables
+    -- intern variables
+	var ReadFlashIdBufVal0 0
+	var ReadFlashIdBufVal1 0
+	var ReadFlashIdBufVal2 0
+	var ReadFlashIdReceiveAddress 0
+    -- result variables
+    var ReadFlashIdVal 0
+    
+
+readFlashId:
+proc
+
+    wait 3000
+
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    call $zeroCellBuffer
+    equ CmdAddress $CellBufferAddress
+    equ CmdConfigReceiveFrameStartAddressVal #x180
+    call $setCmdConfigReceiveFrameStartAddressVal
+    
+    add CmdAddress #x004  -- #x004 : #x01
+    equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal 20
+    call $setCmdSetClkPeriodVal
+    
+    add CmdAddress #x004  -- #x008 : #x02
+    equ CmdWaitWaitNsVal 40
+    call $setCmdWaitWaitNsVal
+    
+    add CmdAddress #x004  -- #x00C : #x03
+    equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal 20
+    call $setCmdSetClkPeriodVal
+    
+    add CmdAddress #x004  -- #x010 : #x04
+    equ CmdTransceivePacketMultiplierVal 1
+    call $setCmdTransceivePacketMultiplierVal   
+    equ CmdTransceivePacketLengthVal 4
+    call $setCmdTransceivePacketLengthVal       
+
+    add CmdAddress #x004 -- #x014 : #x05
+    -- cmd byte read ID
+    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_DEVICE_ID_RD
+    add CmdAddress #x001  -- #x015
+    -- cmd byte 0
+    bus write $SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress #x001 -- #x016
+    -- cmd byte 0
+    bus write $SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress #x001 -- #x017
+    -- cmd byte 0
+    bus write $SpiFlashBus 8 $CmdAddress 0
+    
+    add CmdAddress #x001 -- #x018 : #x06  
+    equ CmdWaitWaitNsVal 40
+    call $setCmdWaitWaitNsVal
+    
+    add CmdAddress #x004 -- #x01C : #x07
+    equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
+    call $setCmdEndAutoRestartMVal
+
+    equ ControlRegSwBufferMVal $PreparedMVal
+    call $setControlRegSwBufferMVal 
+    -- send buffer 0 
+      
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    
+    call $zeroCellBuffer
+    equ CmdAddress $CellBufferAddress
+    equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
+    call $setCmdEndAutoRestartMVal
+    
+    equ ControlRegSwBufferMVal $PreparedMVal
+    call $setControlRegSwBufferMVal
+    -- send buffer 0 
+    
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    -- wait for buffer 0
+     
+    equ ReadFlashIdReceiveAddress $CmdConfigReceiveFrameStartAddressVal
+    -- Don't care for first received byte 
+    add ReadFlashIdReceiveAddress 1
+    -- ID length 3
+    -- ID MSB
+    bus read $SpiFlashBus 8 $ReadFlashIdReceiveAddress ReadFlashIdBufVal2
+    add ReadFlashIdReceiveAddress 1
+    bus read $SpiFlashBus 8 $ReadFlashIdReceiveAddress ReadFlashIdBufVal1
+    add ReadFlashIdReceiveAddress 1
+    -- ID LSB
+    bus read $SpiFlashBus 8 $ReadFlashIdReceiveAddress ReadFlashIdBufVal0
+    
+    equ ReadFlashIdVal $ReadFlashIdBufVal2
+    shl ReadFlashIdVal 8
+    or ReadFlashIdVal $ReadFlashIdBufVal1
+    shl ReadFlashIdVal 8
+    or ReadFlashIdVal $ReadFlashIdBufVal0
+    
+    -- expected #xEF #70 #18
+    
+    log $INFO_2 "Flash Id: $ReadFlashIdVal" 
+
+end proc
