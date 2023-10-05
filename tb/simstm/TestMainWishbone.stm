@@ -27,37 +27,6 @@
 --  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 --  SOFTWARE.
 -- ******************************************************************************
-
-const wishbone 0
-const avalon 1
-const axi4lite 2
-
-equ ReadModifyWriteBus32 $wishbone
-equ ReadModifyWriteBus16 $wishbone
-equ ReadModifyWriteBus8 $wishbone
-equ CmdBus $wishbone
-equ SpiFlashBus $wishbone
-equ DoubleBufferBus $wishbone
-
-var WaitTimeOut 100000 -- ms
-
-call $SpiControllerIfcInit
-call $CellBufferIfcInit
-
-verbosity $INFO_2
-trace 0
-wait 1000
-log $INFO "Main test started"
-log $INFO_3 "HwBufferMask: $HwBufferMask"
-
-call $testSpiFlash
-
-log $INFO "Main test finished"
-wait 1000
-finish
-
--- includes must be placed at the end of a module
-
 include "../../src-gen/simstm/CellBufferIfc.stm"
 include "../../src-gen/simstm/SpiControllerIfc.stm"
 
@@ -88,3 +57,34 @@ include "SpiFlash/WriteFlashPage.stm"
 include "SpiFlash/EraseFlashChip.stm"
 
 include "Tests/TestSpiFlash.stm"
+
+
+const wishbone 0
+const avalon 1
+const axi4lite 2
+var WaitTimeOut 100000 -- ms
+
+Main:
+proc
+	equ ReadModifyWriteBus32 $wishbone
+	equ ReadModifyWriteBus16 $wishbone
+	equ ReadModifyWriteBus8 $wishbone
+	equ CmdBus $wishbone
+	equ SpiFlashBus $wishbone
+	equ DoubleBufferBus $wishbone
+	
+	call $SpiControllerIfcInit
+	call $CellBufferIfcInit
+	
+	verbosity $INFO_2
+	trace 0
+	wait 1000
+	log $INFO "Main test started"
+	log $INFO_3 "HwBufferMask: $HwBufferMask"
+	
+	call $testSpiFlash
+	
+	log $INFO "Main test finished"
+	wait 1000
+	finish
+end proc
