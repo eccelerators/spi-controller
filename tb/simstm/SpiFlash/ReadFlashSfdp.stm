@@ -44,10 +44,10 @@ proc
     call $waitForStatusRegHwBufferMVal
     call $zeroCellBuffer
     equ CmdAddress $CellBufferAddress
-    equ CmdConfigReceiveFrameStartAddressVal #x100
+    equ CmdConfigReceiveFrameStartAddressVal 0x100
     call $setCmdConfigReceiveFrameStartAddressVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -57,11 +57,11 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -71,43 +71,43 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdTransmitPacketMultiplierVal 1
     call $setCmdTransmitPacketMultiplierVal   
     equ CmdTransmitPacketLengthVal 5
     call $setCmdTransmitPacketLengthVal 
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     -- cmd byte read SFDP
-    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_SFDP_RD
-    add CmdAddress #x001
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_SFDP_RD
+    add CmdAddress 0x001
     -- cmd byte 0
-    bus write $SpiFlashBus 8 $CmdAddress 0
-    add CmdAddress #x001
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
     -- cmd byte 0
-    bus write $SpiFlashBus 8 $CmdAddress 0
-    add CmdAddress #x001
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
     -- cmd byte 0
-    bus write $SpiFlashBus 8 $CmdAddress 0
+    bus write SpiFlashBus 8 $CmdAddress 0
     
-    add CmdAddress #x001
+    add CmdAddress 0x001
     -- 1 dummy byte 0
-    bus write $SpiFlashBus 8 $CmdAddress 0 
+    bus write SpiFlashBus 8 $CmdAddress 0 
     
-    add CmdAddress #x004
+    add CmdAddress 0x004
     equ CmdTransceivePacketMultiplierVal 64
     call $setCmdTransceivePacketMultiplierVal   
     equ CmdTransceivePacketLengthVal 4
     call $setCmdTransceivePacketLengthVal  
     
-    add CmdAddress #x004
-    bus write $SpiFlashBus 32 $CmdAddress 0
+    add CmdAddress 0x004
+    bus write SpiFlashBus 32 $CmdAddress 0
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
       
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -119,7 +119,7 @@ proc
     call $waitForStatusRegHwBufferMVal
     
     call $zeroCellBuffer
-    equ CmdAddress #x000
+    equ CmdAddress 0x000
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -133,7 +133,7 @@ proc
      
     equ ReadFlashSfdpReceiveAddress $CmdConfigReceiveFrameStartAddressVal
     loop 256
-      	bus read $SpiFlashBus 8 $ReadFlashSfdpReceiveAddress ReadFlashSfdpVal
+      	bus read SpiFlashBus 8 $ReadFlashSfdpReceiveAddress ReadFlashSfdpVal
       	array set ReadFlashSfdpArray $ReadFlashSfdpArrayIndex $ReadFlashSfdpVal
         add ReadFlashSfdpReceiveAddress 1
         add ReadFlashSfdpArrayIndex 1

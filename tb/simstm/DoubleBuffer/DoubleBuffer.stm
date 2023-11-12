@@ -29,6 +29,6 @@
 -- ******************************************************************************
 
     -- global 
-	var DoubleBufferBus 0 -- for all Cmds modules
+	bus DoubleBufferBus 0 -- for all Cmds modules
 
 

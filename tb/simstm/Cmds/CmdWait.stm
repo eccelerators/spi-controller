@@ -41,12 +41,12 @@ proc
 	equ CmdWaitTmp0 $CmdWaitWaitNsVal
 	shl CmdWaitTmp0 $CmdWaitCell_WaitNsPosition
 	or CmdWaitTmp0 $CmdWaitCell_WaitCellIdMVal
-	bus write $CmdBus 32 $CmdAddress $CmdWaitTmp0
+	bus write CmdBus 32 $CmdAddress $CmdWaitTmp0
 end proc
 
 getCmdWaitWaitNsVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdWaitTmp0
+	bus read CmdBus 32 $CmdAddress CmdWaitTmp0
 	and CmdWaitTmp0 $CmdWaitCell_WaitNsMask
 	shr CmdWaitTmp0 $CmdWaitCell_WaitNsPosition
 	equ CmdWaitWaitNsVal $CmdWaitTmp0

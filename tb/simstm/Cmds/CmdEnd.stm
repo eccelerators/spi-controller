@@ -50,7 +50,7 @@ end proc
 
 getCmdEndAutoRestartMVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdEndTmp0
+	bus read CmdBus 32 $CmdAddress CmdEndTmp0
 	and CmdEndTmp0 $CmdEndCell_AutoRestartMask
 	equ CmdEndAutoRestartMVal $CmdEndTmp0
 end proc
@@ -69,7 +69,7 @@ end proc
 
 getCmdEndAddressToGotoVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdEndTmp0
+	bus read CmdBus 32 $CmdAddress CmdEndTmp0
 	and CmdEndTmp0 $CmdEndCell_AddressToGotoMask
 	shr CmdEndTmp0 $CmdEndCell_AddressToGotoPosition
 	equ CmdEndAddressToGotoVal $CmdEndTmp0

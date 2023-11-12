@@ -67,12 +67,12 @@ var WaitTimeOut 100000 -- ms
 
 Main:
 proc
-	equ ReadModifyWriteBus32 $axi4lite
-	equ ReadModifyWriteBus16 $axi4lite
-	equ ReadModifyWriteBus8 $axi4lite
-	equ CmdBus $axi4lite
-	equ SpiFlashBus $axi4lite
-	equ DoubleBufferBus $axi4lite
+	bus pointer copy ReadModifyWriteBus32 axi4lite
+	bus pointer copy ReadModifyWriteBus16 axi4lite
+	bus pointer copy ReadModifyWriteBus8 axi4lite
+	bus pointer copy CmdBus axi4lite
+	bus pointer copy SpiFlashBus axi4lite
+	bus pointer copy DoubleBufferBus axi4lite
 	
 	call $SpiControllerIfcInit
 	call $CellBufferIfcInit
@@ -80,12 +80,12 @@ proc
 	verbosity $INFO_2
 	trace 0
 	wait 1000
-	log $INFO "Main test started"
-	log $INFO_3 "HwBufferMask: $HwBufferMask"
+	log message $INFO "Main test started"
+	log message $INFO_3 "HwBufferMask: {}" $HwBufferMask
 	
 	call $testSpiFlash
 	
-	log $INFO "Main test finished"
+	log message $INFO "Main test finished"
 	wait 1000
 	finish
 end proc

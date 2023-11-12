@@ -11,12 +11,12 @@ proc
 	equ CmdForLoopTmp0 $CmdForLoopForLoopCountVal
 	shl CmdForLoopTmp0 $CmdForLoopCell_CmdForLoopCellIdPosition
 	or CmdForLoopTmp0 $CmdForLoopCell_ForLoopCellIdMVal
-	bus write $CmdBus 32 $CmdAddress $CmdForLoopTmp0
+	bus write CmdBus 32 $CmdAddress $CmdForLoopTmp0
 end proc
 
 getCmdForLoopForLoopCountVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdForLoopTmp0
+	bus read CmdBus 32 $CmdAddress CmdForLoopTmp0
 	and CmdForLoopTmp0 $CmdForLoopCell_ForLoopCountMask
 	shr CmdForLoopTmp0 $CmdForLoopCell_CmdForLoopCellIdPosition
 	equ CmdForLoopForLoopCountVal $CmdForLoopTmp0

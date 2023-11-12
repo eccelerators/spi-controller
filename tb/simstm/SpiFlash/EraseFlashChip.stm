@@ -44,10 +44,10 @@ proc
     call $waitForStatusRegHwBufferMVal
     call $zeroCellBuffer
     equ CmdAddress $CellBufferAddress
-    equ CmdConfigReceiveFrameStartAddressVal #x180
+    equ CmdConfigReceiveFrameStartAddressVal 0x180
     call $setCmdConfigReceiveFrameStartAddressVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -57,11 +57,11 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -71,17 +71,17 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdTransmitPacketMultiplierVal 1
     call $setCmdTransmitPacketMultiplierVal   
     equ CmdTransmitPacketLengthVal 1
     call $setCmdTransmitPacketLengthVal 
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     -- cmd byte write enable
-    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_WRITE_ENABLE
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_WRITE_ENABLE
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -91,11 +91,11 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 100
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -105,21 +105,21 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
      
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdTransmitPacketMultiplierVal 1
     call $setCmdTransmitPacketMultiplierVal   
     equ CmdTransmitPacketLengthVal 1
     call $setCmdTransmitPacketLengthVal 
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     -- cmd byte write page
-    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_CHIP_ERASE
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_CHIP_ERASE
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
       
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -131,7 +131,7 @@ proc
     call $waitForStatusRegHwBufferMVal
     
     call $zeroCellBuffer
-    equ CmdAddress #x000
+    equ CmdAddress 0x000
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     

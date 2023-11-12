@@ -41,12 +41,12 @@ proc
 	equ CmdGotoTmp0 $CmdGotoAddressToGotoVal
 	shl CmdGotoTmp0 $CmdGotoCell_CmdGotoCellIdPosition
 	or CmdGotoTmp0 $CmdGotoCell_GotoCellIdMVal
-	bus write $CmdBus 32 $CmdAddress $CmdGotoTmp0
+	bus write CmdBus 32 $CmdAddress $CmdGotoTmp0
 end proc
 
 getCmdGotoAddressToGotoVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdGotoTmp0
+	bus read CmdBus 32 $CmdAddress CmdGotoTmp0
 	and CmdGotoTmp0 $CmdGotoCell_AddressToGotoMask
 	shr CmdGotoTmp0 $CmdGotoCell_AddressToGotoPosition
 	equ CmdGotoAddressToGotoVal $CmdGotoTmp0

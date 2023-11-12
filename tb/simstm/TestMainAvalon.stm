@@ -60,19 +60,19 @@ include "SpiFlash/EraseFlashChip.stm"
 include "Tests/TestSpiFlash.stm"
 
 
-const wishbone 0
-const avalon 1
-const axi4lite 2
+bus wishbone 0
+bus avalon 1
+bus axi4lite 2
 var WaitTimeOut 100000 -- ms
 
 Main:
 proc
-	equ ReadModifyWriteBus32 $avalon
-	equ ReadModifyWriteBus16 $avalon
-	equ ReadModifyWriteBus8 $avalon
-	equ CmdBus $avalon
-	equ SpiFlashBus $avalon
-	equ DoubleBufferBus $avalon
+	bus pointer copy ReadModifyWriteBus32 avalon
+	bus pointer copy ReadModifyWriteBus16 avalon
+	bus pointer copy ReadModifyWriteBus8 avalon
+	bus pointer copy CmdBus avalon
+	bus pointer copy SpiFlashBus avalon
+	bus pointer copy DoubleBufferBus avalon
 	
 	call $SpiControllerIfcInit
 	call $CellBufferIfcInit
@@ -80,12 +80,12 @@ proc
 	verbosity $INFO_2
 	trace 0
 	wait 1000
-	log $INFO "Main test started"
-	log $INFO_3 "HwBufferMask: $HwBufferMask"
+	log message $INFO "Main test started"
+	log message $INFO_3 "HwBufferMask: {}" $HwBufferMask
 	
 	call $testSpiFlash
 	
-	log $INFO "Main test finished"
+	log message $INFO "Main test finished"
 	wait 1000
 	finish
 end proc

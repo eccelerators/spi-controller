@@ -49,10 +49,10 @@ proc
     call $waitForStatusRegHwBufferMVal
     call $zeroCellBuffer
     equ CmdAddress $CellBufferAddress
-    equ CmdConfigReceiveFrameStartAddressVal #x100
+    equ CmdConfigReceiveFrameStartAddressVal 0x100
     call $setCmdConfigReceiveFrameStartAddressVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -62,11 +62,11 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -76,47 +76,47 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdTransmitPacketMultiplierVal 1
     call $setCmdTransmitPacketMultiplierVal   
     equ CmdTransmitPacketLengthVal 4
     call $setCmdTransmitPacketLengthVal 
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     -- cmd byte read page
-    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_PAGE_RD
-    add CmdAddress #x001
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_PAGE_RD
+    add CmdAddress 0x001
     -- cmd page address byte 0 MSB
     equ ReadFlashPageTmp0 $ReadFlashPagePageAddress
     div ReadFlashPageTmp0 65536 
-    and ReadFlashPageTmp0 #xFF
-    bus write $SpiFlashBus 8 $CmdAddress 0
-    add CmdAddress #x001
+    and ReadFlashPageTmp0 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
     -- cmd page address byte 1
     equ ReadFlashPageTmp0 $ReadFlashPagePageAddress
     div ReadFlashPageTmp0 256 
-    and ReadFlashPageTmp0 #xFF
-    bus write $SpiFlashBus 8 $CmdAddress 0
-    add CmdAddress #x001
+    and ReadFlashPageTmp0 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
     -- cmd page address byte 2 LSB
     equ ReadFlashPageTmp0 $ReadFlashPagePageAddress
-    and ReadFlashPageTmp0 #xFF
-    bus write $SpiFlashBus 8 $CmdAddress 0
+    and ReadFlashPageTmp0 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
     
-    add CmdAddress #x001
+    add CmdAddress 0x001
     equ CmdTransceivePacketMultiplierVal 64
     call $setCmdTransceivePacketMultiplierVal   
     equ CmdTransceivePacketLengthVal 4
     call $setCmdTransceivePacketLengthVal  
     
-    add CmdAddress #x004
-    bus write $SpiFlashBus 32 $CmdAddress 0
+    add CmdAddress 0x004
+    bus write SpiFlashBus 32 $CmdAddress 0
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
       
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -128,7 +128,7 @@ proc
     call $waitForStatusRegHwBufferMVal
     
     call $zeroCellBuffer
-    equ CmdAddress #x000
+    equ CmdAddress 0x000
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -143,7 +143,7 @@ proc
     equ ReadFlashPageReceiveAddress $CmdConfigReceiveFrameStartAddressVal
     equ ReadFlashPageArrayIndex 0
     loop 256
-      	bus read $SpiFlashBus 8 $ReadFlashPageReceiveAddress ReadFlashPageVal
+      	bus read SpiFlashBus 8 $ReadFlashPageReceiveAddress ReadFlashPageVal
       	array set ReadFlashPageArray $ReadFlashPageArrayIndex $ReadFlashPageVal
         add ReadFlashPageReceiveAddress 1
         add ReadFlashPageArrayIndex 1

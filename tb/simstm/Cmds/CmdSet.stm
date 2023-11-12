@@ -53,7 +53,7 @@ end proc
 
 getCmdSetChipSelectVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdSetTmp0
+	bus read CmdBus 32 $CmdAddress CmdSetTmp0
 	and CmdSetTmp0 $CmdSetCell_ChipSelectMask
 	shr CmdSetTmp0 $CmdSetCell_ChipSelectPosition
 	equ CmdSetChipSelectVal $CmdSetTmp0
@@ -72,7 +72,7 @@ end proc
 
 getCmdSetClkPolarityMVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdSetTmp0
+	bus read CmdBus 32 $CmdAddress CmdSetTmp0
 	and CmdSetTmp0 $CmdSetCell_ClkPolarityMask
 	equ CmdSetClkPolarityMVal $CmdSetTmp0
 end proc
@@ -90,7 +90,7 @@ end proc
 
 getCmdSetClkPhaseMVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdSetTmp0
+	bus read CmdBus 32 $CmdAddress CmdSetTmp0
 	and CmdSetTmp0 $CmdSetCell_ClkPhaseMask
 	equ CmdSetClkPhaseMVal $CmdSetTmp0
 end proc
@@ -109,7 +109,7 @@ end proc
 
 getCmdSetClkPeriodVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdSetTmp0
+	bus read CmdBus 32 $CmdAddress CmdSetTmp0
 	and CmdSetTmp0 $CmdSetCell_ClkPeriodMask
 	shr CmdSetTmp0 $CmdSetCell_ClkPeriodPosition
 	equ CmdSetClkPeriodVal $CmdSetTmp0
