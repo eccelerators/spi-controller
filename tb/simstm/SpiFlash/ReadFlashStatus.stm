@@ -44,10 +44,10 @@ proc
     equ StatusRegHwBufferMValToWaitFor $AvailableMVal
     call $waitForStatusRegHwBufferMVal
     equ CmdAddress $CellBufferAddress
-    equ CmdConfigReceiveFrameStartAddressVal #x180
+    equ CmdConfigReceiveFrameStartAddressVal 0x180
     call $setCmdConfigReceiveFrameStartAddressVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -57,11 +57,11 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
@@ -71,24 +71,24 @@ proc
     equ CmdSetClkPeriodVal 20
     call $setCmdSetClkPeriodVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdTransceivePacketMultiplierVal 1
     call $setCmdTransceivePacketMultiplierVal   
     equ CmdTransceivePacketLengthVal 2
     call $setCmdTransceivePacketLengthVal       
 
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     -- cmd byte read ID
-    bus write $SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_STATUS_RD
-    add CmdAddress #x001
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_STATUS_RD
+    add CmdAddress 0x001
     -- cmd byte 0
-    bus write $SpiFlashBus 8 $CmdAddress 0
+    bus write SpiFlashBus 8 $CmdAddress 0
     
-    add CmdAddress #x003 
+    add CmdAddress 0x003 
     equ CmdWaitWaitNsVal 40
     call $setCmdWaitWaitNsVal
     
-    add CmdAddress #x004 
+    add CmdAddress 0x004 
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -99,7 +99,7 @@ proc
     equ StatusRegHwBufferMValToWaitFor $AvailableMVal
     call $waitForStatusRegHwBufferMVal
     
-    equ CmdAddress #x000
+    equ CmdAddress 0x000
     equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
     call $setCmdEndAutoRestartMVal
     
@@ -115,11 +115,11 @@ proc
     -- Don't care for first received byte 
     add ReadFlashStatusReceiveAddress 1
     -- Status length 1 byte
-    bus read $SpiFlashBus 8 $ReadFlashStatusReceiveAddress ReadFlashStatusBufVal
+    bus read SpiFlashBus 8 $ReadFlashStatusReceiveAddress ReadFlashStatusBufVal
 
     equ ReadFlashStatusVal $ReadFlashStatusBufVal
 
-    log $INFO_2 "Flash Status: $ReadFlashStatusVal" 
+    log message $INFO_2 "Flash Status: {}" $ReadFlashStatusVal
 
 end proc
 
@@ -128,12 +128,12 @@ proc
       loop $WaitTimeOut
           wait 1000
           call $readFlashStatus          
-          log $INFO_3 "waitForReadFlashStatusNotBusy: $ReadFlashStatusVal"
+          log message $INFO_3 "waitForReadFlashStatusNotBusy: {}" $ReadFlashStatusVal
           and ReadFlashStatusVal 1  
           if $ReadFlashStatusVal = 0
               return
           end if
       end loop
-      log $ERROR "waitForReadFlashStatusNotBusy: Busy not reset within reasonable time"
+      log message $ERROR "waitForReadFlashStatusNotBusy: Busy not reset within reasonable time"
       abort
 end proc

@@ -32,9 +32,9 @@ library ieee;
     use ieee.numeric_std.all;
     
 use work.SpiControllerIfcPackage.all;
-use work.tb_pkg_bus.all;
-use work.tb_pkg_signals.all;
-use work.tb_pkg.all;
+use work.tb_bus_pkg.all;
+use work.tb_signals_pkg.all;
+use work.tb_base_pkg.all;
 
 
 entity tb_top_wishbone is
@@ -82,8 +82,9 @@ begin
     signals_in.in_signal <= '0';
     signals_in.in_signal_1 <= (others => '0');
     signals_in.in_signal_2 <= '0';
+    signals_in.in_signal_3 <= '0';
     
-    tb_FileIo_i : entity work.tb_simstm
+    i_tb_simstm : entity work.tb_simstm
         generic map (
             stimulus_path => stimulus_path,
             stimulus_file => stimulus_file          

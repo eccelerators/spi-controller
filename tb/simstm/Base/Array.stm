@@ -82,9 +82,8 @@ proc
     mul ArrayDumpDoneInLoop 8
     equ ArrayDumpRemaining $ArrayDumpSize
     sub ArrayDumpRemaining $ArrayDumpDoneInLoop
-    log $INFO_2 "array: dump "  
+    log message 0 "array: dump "  
     equ ArrayDumpIndex 0
-    log 0 "ArrayDumpLoopNumber $ArrayDumpLoopNumber "
     loop $ArrayDumpLoopNumber        
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
         add ArrayDumpIndex 1
@@ -102,7 +101,7 @@ proc
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal7
         add ArrayDumpIndex 1      
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5 $ArrayDumpVal6 $ArrayDumpVal7"
+        log message 0 " {} {} {} {} {} {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5 $ArrayDumpVal6 $ArrayDumpVal7
     end loop  
     if $ArrayDumpRemaining = 7
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
@@ -118,7 +117,7 @@ proc
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal5
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal6 
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5 $ArrayDumpVal6"    
+        log message 0 " {} {} {} {} {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5 $ArrayDumpVal6
     end if
     if $ArrayDumpRemaining = 6
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
@@ -132,7 +131,7 @@ proc
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal4
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal5
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5"    
+        log message 0 " {} {} {} {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4 $ArrayDumpVal5    
     end if
     if $ArrayDumpRemaining = 5
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
@@ -144,7 +143,7 @@ proc
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal3
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal4
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4"    
+        log message 0 " {} {} {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3 $ArrayDumpVal4
     end if    
     if $ArrayDumpRemaining = 4
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
@@ -154,7 +153,7 @@ proc
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal2
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal3
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3"    
+        log message 0 " {} {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2 $ArrayDumpVal3
     end if
     if $ArrayDumpRemaining = 3
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
@@ -162,17 +161,17 @@ proc
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal1
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal2
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2"    
+        log message 0 " {} {} {}" $ArrayDumpVal0 $ArrayDumpVal1 $ArrayDumpVal2
     end if
     if $ArrayDumpRemaining = 2
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
         add ArrayDumpIndex 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal1
-        log $INFO_2 "$ArrayDumpVal0 $ArrayDumpVal1"    
+        log message 0 " {} {}" $ArrayDumpVal0 $ArrayDumpVal1
     end if
     if $ArrayDumpRemaining = 1
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0
-        log $INFO_2 "$ArrayDumpVal0"    
+        log message 0 " {}" $ArrayDumpVal0
     end if             
 end proc
 

@@ -40,12 +40,16 @@
    
    <target name="compile" depends="
      -do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v,
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg.vhd,
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_wishbone.vhd,
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_avalonmm.vhd,
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_axi4lite.vhd, 
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus.vhd,
-     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_signals.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg_body.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_instructions_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_interpreter_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_interpreter_pkg_body.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_wishbone_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_avalon_pkg.vhd,
+     -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_axi4lite_pkg.vhd, 
+     -do_compile_tb_hdl__tb_bus_pkg.vhd,
+     -do_compile_tb_hdl__tb_signals_pkg.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_simstm.vhd,
      -do_compile_src-gen_vhdl_wishbone__SpiControllerIfcPackage.vhd,
      -do_compile_src-gen_vhdl_wishbone__SpiControllerIfcWishbone.vhd,
@@ -74,40 +78,68 @@
          <arg value="./../tb-ip/hdl/Winbond/W25Q128JVxIM/W25Q128JVxIM.v"/>
       </exec>
    </target>  
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg.vhd" description="compile tb_pkg.vhd">
+   
+   
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg.vhd" description="compile tb_pkg.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_base_pkg.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_wishbone.vhd" description="compile tb_pkg_bus_wishbone.vhd">
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg_body.vhd" description="compile tb_pkg.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg_bus_wishbone.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_base_pkg_body.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_avalonmm.vhd" description="compile tb_pkg_bus_avalonmm.vhd">
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_instructions_pkg.vhd" description="compile tb_pkg.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg_bus_avalonmm.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_instructions_pkg.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus_axi4lite.vhd" description="compile tb_tb_pkg_bus_axi4lite.vhd">
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_interpreter_pkg.vhd" description="compile tb_pkg.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg_bus_axi4lite.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_interpreter_pkg.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_bus.vhd" description="compile tb_pkg_bus.vhd">
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_interpreter_pkg_body.vhd" description="compile tb_pkg.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg_bus.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_interpreter_pkg_body.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_pkg_signals.vhd" description="compile tb_pkg_signals.vhd">
+   
+   
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_wishbone_pkg.vhd" description="compile tb_pkg_bus_wishbone.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_pkg_signals.vhd"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_bus_wishbone_pkg.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_avalon_pkg.vhd" description="compile tb_pkg_bus_avalonmm.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_bus_avalon_pkg.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_bus_axi4lite_pkg.vhd" description="compile tb_tb_pkg_bus_axi4lite.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Eccelerators/simstm/src/tb_bus_axi4lite_pkg.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb_hdl__tb_bus_pkg.vhd" description="compile tb_pkg_bus.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb/hdl/tb_bus_pkg.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb_hdl__tb_signals_pkg.vhd" description="compile tb_pkg_signals.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb/hdl/tb_signals_pkg.vhd"/>
       </exec>
    </target>
    <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_simstm.vhd" description="compile tb_simstm.vhd">

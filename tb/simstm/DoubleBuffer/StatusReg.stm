@@ -41,18 +41,18 @@
 
 getStatusRegOperationMVal:
 proc
-	bus read $DoubleBufferBus 32 $StatusRegAddress StatusRegTmp0
+	bus read DoubleBufferBus 32 $StatusRegAddress StatusRegTmp0
 	and StatusRegTmp0 $OperationMask
 	equ StatusRegOperationMVal $StatusRegTmp0
 end proc
 
 getStatusRegHwBufferMVal:
 proc
-	bus read $DoubleBufferBus 32 $StatusRegAddress StatusRegTmp0
-	log $INFO_3 "getStatusRegHwBufferMVal: $StatusRegTmp0"
+	bus read DoubleBufferBus 32 $StatusRegAddress StatusRegTmp0
+	log message $INFO_3 "getStatusRegHwBufferMVal: {}" $StatusRegTmp0
 	and StatusRegTmp0 $HwBufferMask
-	log $INFO_3 "getStatusRegHwBufferMValHwBufferMask: $HwBufferMask"
-	log $INFO_3 "getStatusRegHwBufferMValMasked: $StatusRegTmp0"
+	log message $INFO_3 "getStatusRegHwBufferMValHwBufferMask: {}" $HwBufferMask
+	log message $INFO_3 "getStatusRegHwBufferMValMasked: {}" $StatusRegTmp0
 	equ StatusRegHwBufferMVal $StatusRegTmp0
 end proc
 
@@ -62,12 +62,12 @@ proc
     loop $WaitTimeOut
         wait 1000
         call $getStatusRegOperationMVal          
-        log $INFO_3 "waitForStatusRegOperationMVal: $StatusRegOperationMVal"
+        log message $INFO_3 "waitForStatusRegOperationMVal:" $StatusRegOperationMVal
         if $StatusRegOperationMVal = $StatusRegOperationMValToWaitFor
             return
         end if
     end loop
-    log $ERROR "waitForStatusRegOperationMVal: $WaitForStatusRegOperationMVal not set within reasonable time"
+    log message $ERROR "waitForStatusRegOperationMVal: {} not set within reasonable time" $StatusRegOperationMVal
     abort
 end proc
 
@@ -76,11 +76,11 @@ proc
     loop $WaitTimeOut
         wait 1000
         call $getStatusRegHwBufferMVal          
-        log $INFO_3 "waitForStatusRegHwBufferMVal: $StatusRegHwBufferMVal"
+        log message $INFO_3 "waitForStatusRegHwBufferMVal:{}" $StatusRegHwBufferMVal
         if $StatusRegHwBufferMVal = $StatusRegHwBufferMValToWaitFor
             return
         end if
     end loop
-    log $ERROR "waitForStatusRegHwBufferMVal: $WaitForStatusRegHwBufferMVal not set within reasonable time"
+    log message $ERROR "waitForStatusRegHwBufferMVal: {} not set within reasonable time" $StatusRegOperationMVal
     abort
 end proc

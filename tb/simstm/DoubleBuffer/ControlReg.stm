@@ -46,7 +46,7 @@ end proc
 
 getControlRegActivationMVal:
 proc
-	bus read $DoubleBufferBus 32 $ControlRegAddress ControlRegTmp0
+	bus read DoubleBufferBus 32 $ControlRegAddress ControlRegTmp0
 	and ControlRegTmp0 $ActivationMask
 	equ ControlRegActivationMVal $ControlRegTmp0
 end proc
@@ -61,7 +61,7 @@ end proc
 
 getControlRegSwBufferMVal:
 proc
-	bus read $DoubleBufferBus 32 $ControlRegAddress ControlRegTmp0
+	bus read DoubleBufferBus 32 $ControlRegAddress ControlRegTmp0
 	and ControlRegTmp0 $SwBufferMask
 	equ ControlRegSwBufferMVal $ControlRegTmp0
 end proc

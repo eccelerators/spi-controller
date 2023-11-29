@@ -51,7 +51,7 @@ end proc
 
 getCmdTransceivePacketMultiplierVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdTransceiveTmp0
+	bus read CmdBus 32 $CmdAddress CmdTransceiveTmp0
 	and CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthMask
 	shr CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthPosition
 	equ CmdTransceivePacketMultiplierVal $CmdTransceiveTmp0
@@ -71,7 +71,7 @@ end proc
 
 getCmdTransceivePacketLengthVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdTransceiveTmp0
+	bus read CmdBus 32 $CmdAddress CmdTransceiveTmp0
 	and CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthMask
 	shr CmdTransceiveTmp0 $CmdTransceiveCell_PacketLengthPosition
 	equ CmdTransceivePacketLengthVal $CmdTransceiveTmp0

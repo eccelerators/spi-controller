@@ -9,8 +9,8 @@
 	<property environment="env" />
 	<property name="HXS_FILES"
 		value="
-		hxs/bases/UsualObjects.hxs 
-		hxs/bases/DoubleBufferControllerBlk.hxs 
+		hxs/bases/usual-objects/hxs/UsualObjects.hxs
+		hxs/bases/double-buffer-controller/hxs/DoubleBufferControllerBlk.hxs 
 		hxs/SpiControllerBlk.hxs 
 		hxs/${ant.project.name}.hxs	
 		" 		
@@ -18,7 +18,7 @@
 	
 	<property name="HXS_FILES_1"
 		value="
-		hxs/bases/UsualObjects.hxs
+		hxs/bases/usual-objects/hxs/UsualObjects.hxs
 		hxs/CellBufferBlk.hxs
 		hxs/CellBufferIfc.hxs		
 		" 		

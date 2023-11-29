@@ -41,12 +41,12 @@ proc
 	equ CmdConfigTmp0 $CmdConfigReceiveFrameStartAddressVal
 	shl CmdConfigTmp0 $CmdConfigCell_ReceiveFrameStartAddressPosition
 	or CmdConfigTmp0 $CmdConfigCell_ConfigCellIdMVal
-	bus write $CmdBus 32 $CmdAddress $CmdConfigTmp0
+	bus write CmdBus 32 $CmdAddress $CmdConfigTmp0
 end proc
 
 getCmdConfigReceiveFrameStartAddressVal:
 proc
-	bus read $CmdBus 32 $CmdAddress CmdConfigTmp0
+	bus read CmdBus 32 $CmdAddress CmdConfigTmp0
 	and CmdConfigTmp0 $CmdConfigCell_ReceiveFrameStartAddressMask
 	shr CmdConfigTmp0 $CmdConfigCell_ReceiveFrameStartAddressPosition
 	equ CmdConfigReceiveFrameStartAddressVal $CmdConfigTmp0

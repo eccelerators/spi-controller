@@ -30,14 +30,14 @@
 
     -- global 
 	var CmdAddress 0 -- for all Cmds modules
-	var CmdBus 0 -- for all Cmds modules
+	bus CmdBus 0 -- for all Cmds modules
 	
 
 zeroCellBuffer:
 proc
     equ CmdAddress $CellBufferAddress
 	loop 64    
-		bus write $CmdBus 32 $CmdAddress 0
+		bus write CmdBus 32 $CmdAddress 0
 		add CmdAddress 4 	
 	end loop
 end proc
