@@ -71,8 +71,8 @@ architecture behavioural of tb_top_axi4lite is
     signal MiSo : std_logic;
     signal MoSi : std_logic;
     signal nCs : std_logic_vector(14 downto 0);
-    signal WPn : std_logic;
-    signal HOLDn : std_logic;
+    signal WPn : std_logic := '1';
+    signal HOLDn : std_logic := '1';
     
 begin
 
@@ -137,19 +137,22 @@ begin
         );
 
 
-    WPn <= 'H';
-    HOLDn <= 'H';
+    WPn <= '1';
+    HOLDn <= '1';
     MiSo <= 'H';
 
-    -- W25Q128JVxIM: QSPI mode is off by default ( W25Q128JVxIQ: QSPI mode is on by default )
-    i_W25Q128JVxIM : entity work.W25Q128JVxIM
+    i_s25fl129p00 : entity work.s25fl129p00
+        generic map (
+            mem_file_name => "./../tb-ip/hdl/Infineon/s25fl129p00/mem/flash.mem",
+            otp_file_name => "./../tb-ip/hdl/Infineon/s25fl129p00/mem/otp.mem"
+        )
         port map(
-            CLK => SClk,
-            CSn => nCs(0),
-            DIO => MoSi,
-            DO => MiSo,
-            WPn => WPn,
-            HOLDn => HOLDn
-        );
+            SCK => SClk,
+            CSNeg => nCs(0),
+            SI => MoSi,
+            SO => MiSo,
+            WPNeg => WPn,
+            HOLDNeg => HOLDn
+        );   
   
 end;

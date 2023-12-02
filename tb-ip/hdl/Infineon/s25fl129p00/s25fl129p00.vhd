@@ -35,15 +35,11 @@
 --  Known Bugs:
 --
 -------------------------------------------------------------------------------
-LIBRARY IEEE;   USE IEEE.std_logic_1164.ALL;
-                USE STD.textio.ALL;
-                -- USE IEEE.VITAL_timing.ALL;
-                -- USE IEEE.VITAL_primitives.ALL;
+LIBRARY IEEE;  
+USE IEEE.std_logic_1164.ALL;
+USE STD.textio.ALL;
 
-LIBRARY work;   USE work.gen_utils.ALL;
-                USE work.conversions.ALL;
-                USE work.VITAL_timing.ALL;
-                USE work.VITAL_primitives.ALL;
+USE work.conversions.ALL;
                  
 -------------------------------------------------------------------------------
 -- ENTITY DECLARATION
@@ -51,83 +47,101 @@ LIBRARY work;   USE work.gen_utils.ALL;
 ENTITY s25fl129p00 IS
     GENERIC (
         -- tipd delays: interconnect path delays
-        tipd_SCK            : VitalDelayType01 := VitalZeroDelay01;
-        tipd_SI             : VitalDelayType01 := VitalZeroDelay01;
-        tipd_SO             : VitalDelayType01 := VitalZeroDelay01;
+        tipd_SCK            : time := 1 ns;
+        tipd_SI              : time := 1 ns;
+        tipd_SO              : time := 1 ns;
 
-        tipd_CSNeg          : VitalDelayType01 := VitalZeroDelay01;
-        tipd_HOLDNeg        : VitalDelayType01 := VitalZeroDelay01;
-        tipd_WPNeg          : VitalDelayType01 := VitalZeroDelay01;
+        tipd_CSNeg           : time := 1 ns;
+        tipd_HOLDNeg         : time := 1 ns;
+        tipd_WPNeg           : time := 1 ns;
 
         -- tpd delays
-        tpd_SCK_SO          : VitalDelayType01Z := UnitDelay01Z; -- tV
-        tpd_SCK_SI          : VitalDelayType01Z := UnitDelay01Z; -- tV
-        tpd_CSNeg_SO        : VitalDelayType01Z := UnitDelay01Z; -- tDIS
-        tpd_HOLDNeg_SO      : VitalDelayType01Z := UnitDelay01Z; -- tLZ,tHZ
+        tpd_SCK_SO           : time := 1 ns; -- tV
+        tpd_SCK_SI           : time := 1 ns; -- tV
+        tpd_CSNeg_SO         : time := 1 ns; -- tDIS
+        tpd_HOLDNeg_SO       : time := 1 ns; -- tLZ,tHZ
 
         --tsetup values
-        tsetup_CSNeg_SCK    : VitalDelayType := UnitDelay;  --tCSS /
-        tsetup_HOLDNeg_SCK  : VitalDelayType := UnitDelay;  --tHC /
-        tsetup_SI_SCK       : VitalDelayType := UnitDelay;  --tsuDAT /
-        tsetup_WPNeg_CSNeg  : VitalDelayType := UnitDelay;  --tWPS \
+        tsetup_CSNeg_SCK     : time := 1 ns;  --tCSS /
+        tsetup_HOLDNeg_SCK   : time := 1 ns;  --tHC /
+        tsetup_SI_SCK        : time := 1 ns;  --tsuDAT /
+        tsetup_WPNeg_CSNeg   : time := 1 ns;  --tWPS \
 
         --thold values
-        thold_CSNeg_SCK     : VitalDelayType := UnitDelay;  --tCSH /
-        thold_HOLDNeg_SCK   : VitalDelayType := UnitDelay;  -- tCHHH /
-        thold_SI_SCK        : VitalDelayType := UnitDelay;  --thdDAT /
-        thold_WPNeg_CSNeg   : VitalDelayType := UnitDelay;  --tWPH \
+        thold_CSNeg_SCK      : time := 1 ns;  --tCSH /
+        thold_HOLDNeg_SCK    : time := 1 ns;  -- tCHHH /
+        thold_SI_SCK         : time := 1 ns;  --thdDAT /
+        thold_WPNeg_CSNeg    : time := 1 ns;  --tWPH \
 
         --tpw values: pulse width
-        tpw_SCK_serial_fast_posedge     : VitalDelayType := UnitDelay; -- tWH
-        tpw_SCK_serial_posedge          : VitalDelayType := UnitDelay; -- tWH
-        tpw_SCK_dual_posedge            : VitalDelayType := UnitDelay; -- tWH
-        tpw_SCK_rd_jid_posedge          : VitalDelayType := UnitDelay; -- tWH
-        tpw_SCK_serial_fast_negedge     : VitalDelayType := UnitDelay; -- tWL
-        tpw_SCK_serial_negedge          : VitalDelayType := UnitDelay; -- tWL
-        tpw_SCK_dual_negedge            : VitalDelayType := UnitDelay; -- tWL
-        tpw_SCK_rd_jid_negedge          : VitalDelayType := UnitDelay; -- tWL
-        tpw_CSNeg_read_posedge          : VitalDelayType := UnitDelay; --tCS
-        tpw_CSNeg_pgm_posedge           : VitalDelayType := UnitDelay; --tCS
+        tpw_SCK_serial_fast_posedge      : time := 1 ns; -- tWH
+        tpw_SCK_serial_posedge           : time := 1 ns; -- tWH
+        tpw_SCK_dual_posedge             : time := 1 ns; -- tWH
+        tpw_SCK_rd_jid_posedge           : time := 1 ns; -- tWH
+        tpw_SCK_serial_fast_negedge      : time := 1 ns; -- tWL
+        tpw_SCK_serial_negedge           : time := 1 ns; -- tWL
+        tpw_SCK_dual_negedge             : time := 1 ns; -- tWL
+        tpw_SCK_rd_jid_negedge           : time := 1 ns; -- tWL
+        tpw_CSNeg_read_posedge           : time := 1 ns; --tCS
+        tpw_CSNeg_pgm_posedge            : time := 1 ns; --tCS
 
         -- tperiod min (calculated as 1/max freq)
-        tperiod_SCK_serial_rd       : VitalDelayType := UnitDelay; --fSCK=40MHz
-        tperiod_SCK_serial_fast_rd  : VitalDelayType := UnitDelay; --fSCK=104MHz
-        tperiod_SCK_dual_fast_rd    : VitalDelayType := UnitDelay; --fSCK=80MHz
-        tperiod_SCK_serial_rd_jid   : VitalDelayType := UnitDelay;--fSCK=50MHz
-
-        -- tdevice values: values for internal delays
+        tperiod_SCK_serial_rd        : time := 1 ns; --fSCK=40MHz
+        tperiod_SCK_serial_fast_rd   : time := 1 ns; --fSCK=104MHz
+        tperiod_SCK_dual_fast_rd     : time := 1 ns; --fSCK=80MHz
+        tperiod_SCK_serial_rd_jid    : time := 1 ns;--fSCK=50MHz
+        
+        -- tdevice values: values for internal delays originally
             -- Page Program Operation
-        tdevice_PP          : VitalDelayType    := 3 ms;
+        -- tdevice_PP          : VitalDelayType    := 3 ms;
             -- Page Program Operation (ACC=9V))
-        tdevice_EP          : VitalDelayType    := 2.4 ms;    --tPP
+        -- tdevice_EP          : VitalDelayType    := 2.4 ms;    --tPP
             -- Sector Erase Operation
-        tdevice_SE          : VitalDelayType    := 2 sec;   --tSE
+        -- tdevice_SE          : VitalDelayType    := 2 sec;   --tSE
             -- Bulk Erase Operation
-        tdevice_BE          : VitalDelayType    := 256 sec; --tBE
+        -- tdevice_BE          : VitalDelayType    := 256 sec; --tBE
             -- Write Status Register Operation
-        tdevice_WR          : VitalDelayType    := 50 ms;  --tW
+        -- tdevice_WR          : VitalDelayType    := 50 ms;  --tW
             -- Deep Power Down
-        tdevice_DP          : VitalDelayType    := 10 us;   --tDP
+        -- tdevice_DP          : VitalDelayType    := 10 us;   --tDP
             -- Release from Software Protect Mode
-        tdevice_RES         : VitalDelayType    := 30 us;   --tRES
+        -- tdevice_RES         : VitalDelayType    := 30 us;   --tRES
             -- Parameter block erase
-        tdevice_PE          : VitalDelayType    := 800 ms;   --tPE
+        -- tdevice_PE          : VitalDelayType    := 800 ms;   --tPE
             -- VCC (min) to CS# Low
-        tdevice_PU          : VitalDelayType    := 300 us;   --tPU
+        -- tdevice_PU          : VitalDelayType    := 300 us;   --tPU
+        
+        -- tdevice values: values for internal delays speed up for simulation
+            -- Page Program Operation
+        tdevice_PP          : time    := 300 us;
+            -- Page Program Operation (ACC=9V))
+        tdevice_EP          : time    := 240 us;    --tPP
+            -- Sector Erase Operation
+        tdevice_SE          : time    := 2000 us;   --tSE
+            -- Bulk Erase Operation
+        tdevice_BE          : time    := 2560 us; --tBE
+            -- Write Status Register Operation
+        tdevice_WR          : time    := 5000 us;  --tW
+            -- Deep Power Down
+        tdevice_DP          : time    := 10 us;   --tDP
+            -- Release from Software Protect Mode
+        tdevice_RES         : time    := 30 us;   --tRES
+            -- Parameter block erase
+        tdevice_PE          : time    := 80 us;   --tPE
+            -- VCC (min) to CS# Low
+        tdevice_PU          : time    := 30 us;   --tPU
+        -- 
+        -- 
+        
         -- generic control parameters
-        InstancePath        : STRING    := DefaultInstancePath;
-        TimingChecksOn      : BOOLEAN   := DefaultTimingChecks;
-        MsgOn               : BOOLEAN   := DefaultMsgOn;
-        XOn                 : BOOLEAN   := DefaultXon;
+        InstancePath        : STRING    := "to be set by instanciation";
         -- memory file to be loaded
         mem_file_name       : STRING    := "s25fl129p00.mem";
         otp_file_name       : STRING    := "s25fl129p00OTP.mem";
 
         UserPreload         : BOOLEAN   := FALSE; --TRUE;
-        LongTimming         : BOOLEAN   := TRUE;
+        LongTimming         : BOOLEAN   := TRUE
 
-        -- For FMF SDF technology file usage
-        TimingModel         : STRING    := DefaultTimingModel
     );
     PORT (
         SCK             : IN    std_ulogic := 'U'; -- serial clock input
@@ -137,14 +151,12 @@ ENTITY s25fl129p00 IS
         WPNeg           : INOUT std_ulogic := 'U'; -- write protect input
         SO              : INOUT std_ulogic := 'U'  -- SO
     );
-    ATTRIBUTE VITAL_LEVEL0 of s25fl129p00 : ENTITY IS TRUE;
 END s25fl129p00;
 
 -------------------------------------------------------------------------------
 -- ARCHITECTURE DECLARATION
 -------------------------------------------------------------------------------
 ARCHITECTURE vhdl_behavioral of s25fl129p00 IS
-    ATTRIBUTE VITAL_LEVEL0 OF vhdl_behavioral : ARCHITECTURE IS TRUE;
 
     CONSTANT PartID        : STRING  := "s25fl129p00";
     CONSTANT MaxData       : NATURAL := 16#FF#;   --255;
@@ -205,32 +217,29 @@ BEGIN
     ---------------------------------------------------------------------------
     -- Internal Delays
     ---------------------------------------------------------------------------
-    -- Artificial VITAL primitives to incorporate internal delays
-    PP     :VitalBuf(PP_out,  PP_in,      (tdevice_PP     ,UnitDelay));
-    PU     :VitalBuf(PU_out,  PU_in,      (tdevice_PU     ,UnitDelay));
-    SE     :VitalBuf(SE_out,  SE_in,      (tdevice_SE     ,UnitDelay));
-    BE     :VitalBuf(BE_out,  BE_in,      (tdevice_BE     ,UnitDelay));
-    EP     :VitalBuf(EP_out,  EP_in,      (tdevice_EP     ,UnitDelay));
-    WR     :VitalBuf(WR_out,  WR_in,      (tdevice_WR     ,UnitDelay));
-    DP     :VitalBuf(DP_out,  DP_in,      (tdevice_DP     ,UnitDelay));
-    PE     :VitalBuf(PE_out,  PE_in,      (tdevice_PE     ,UnitDelay));
-    RES    :VitalBuf(RES_out, RES_in,     (tdevice_RES    ,UnitDelay));
+    PP_out <= PP_in after tdevice_PP;
+    PU_out <= PU_in after tdevice_PU;
+    SE_out <= SE_in after tdevice_SE;
+    BE_out <= BE_in after tdevice_BE;
+    EP_out <= EP_in after tdevice_EP;
+    WR_out <= WR_in after tdevice_WR;
+    DP_out <= DP_in after tdevice_DP;
+    PE_out <= PE_in after tdevice_PE;
+    RES_out <= RES_in after tdevice_RES;
 
     ---------------------------------------------------------------------------
     -- Wire Delays
     ---------------------------------------------------------------------------
-    WireDelay : BLOCK
-    BEGIN
 
-        w_1 : VitalWireDelay (SCK_ipd,     SCK, tipd_SCK);
-        w_2 : VitalWireDelay (SI_ipd,      SI, tipd_SI);
-        w_3 : VitalWireDelay (SO_ipd,      SO, tipd_SO);
+    SCK_ipd <= SCK after tipd_SCK;
+    SI_ipd <= SI after tipd_SI;
+    SO_ipd <= SO after tipd_SO;
+        
+    CSNeg_ipd <= CSNeg after tipd_CSNeg;
+    HOLDNeg_ipd <= HOLDNeg after tipd_HOLDNeg;
+    WPNeg_ipd <= WPNeg after tipd_WPNeg;
+        
 
-        w_4: VitalWireDelay (CSNeg_ipd,   CSNeg, tipd_CSNeg);
-        w_5: VitalWireDelay (HOLDNeg_ipd, HOLDNeg, tipd_HOLDNeg);
-        w_6: VitalWireDelay (WPNeg_ipd,    WPNeg, tipd_WPNeg);
-
-    END BLOCK;
 
     ---------------------------------------------------------------------------
     -- Main Behavior Block
@@ -497,298 +506,6 @@ BEGIN
     --Power Up time;
     ---------------------------------------------------------------------------
     PoweredUp <= '1' AFTER tdevice_PU;
-
-    ---------------------------------------------------------------------------
-    -- VITAL Timing Checks Procedures
-    ---------------------------------------------------------------------------
-    VITALTimingCheck: PROCESS(SIIn, SOIn, SCK_ipd, CSNeg_ipd, HOLDNegIn,
-                              WPNegIn)
-         -- Timing Check Variables
-        VARIABLE Tviol_SI_SCK     : X01 := '0';
-        VARIABLE TD_SI_SCK        : VitalTimingDataType;
-
-        VARIABLE Tviol_HOLD_SCK   : X01 := '0';
-        VARIABLE TD_HOLD_SCK      : VitalTimingDataType;
-
-        VARIABLE Tviol_CS_SCK     : X01 := '0';
-        VARIABLE TD_CS_SCK        : VitalTimingDataType;
-
-        VARIABLE Tviol_WS_CS      : X01 := '0';
-        VARIABLE TD_WS_CS         : VitalTimingDataType;
-
-        VARIABLE Tviol_WH_CS      : X01 := '0';
-        VARIABLE TD_WH_CS         : VitalTimingDataType;
-
-        VARIABLE Pviol_CS_read    : X01 := '0';
-        VARIABLE PD_CS_read       : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_CS_pgm     : X01 := '0';
-        VARIABLE PD_CS_pgm        : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_serial_fast : X01 := '0';
-        VARIABLE PD_SCK_serial_fast    : VitalPeriodDataType :=
-                                                        VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_dual   : X01 := '0';
-        VARIABLE PD_SCK_dual      : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_rdid   : X01 := '0';
-        VARIABLE PD_SCK_rdid      : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_serial : X01 := '0';
-        VARIABLE PD_SCK_serial    : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_serial_fast_rd: X01 := '0';
-        VARIABLE PD_SCK_serial_fast_rd : VitalPeriodDataType :=
-                                                           VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_serial_rd : X01 := '0';
-        VARIABLE PD_SCK_serial_rd : VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_serial_rdid : X01 := '0';
-        VARIABLE PD_SCK_serial_rdid: VitalPeriodDataType := VitalPeriodDataInit;
-
-        VARIABLE Pviol_SCK_dual_fast_rd: X01 := '0';
-        VARIABLE PD_SCK_dual_fast_rd : VitalPeriodDataType :=
-                                                           VitalPeriodDataInit;
-
-        VARIABLE Violation        : X01 := '0';
-
-    BEGIN
-    ---------------------------------------------------------------------------
-    -- Timing Check Section
-    ---------------------------------------------------------------------------
-    IF (TimingChecksOn) THEN
-
-        -- Setup/Hold Check between SI and SCK, serial mode
-        VitalSetupHoldCheck (
-            TestSignal      => SIIn,
-            TestSignalName  => "SI",
-            RefSignal       => SCK_ipd,
-            RefSignalName   => "SCK",
-            SetupHigh       => tsetup_SI_SCK,
-            SetupLow        => tsetup_SI_SCK,
-            HoldHigh        => thold_SI_SCK,
-            HoldLow         => thold_SI_SCK,
-            CheckEnabled    => SIOut_z /= SIIn,
-            RefTransition   => '/',
-            HeaderMsg       => InstancePath & PartID,
-            TimingData      => TD_SI_SCK,
-            Violation       => Tviol_SI_SCK
-        );
-
-        -- Setup/Hold Check between HOLD# and SCK /
-        VitalSetupHoldCheck (
-            TestSignal      => HOLDNegIn,
-            TestSignalName  => "HOLD#",
-            RefSignal       => SCK_ipd,
-            RefSignalName   => "SCK",
-            SetupLow        => tsetup_HOLDNeg_SCK,
-            SetupHigh       => tsetup_HOLDNeg_SCK,
-            HoldLow         => thold_HOLDNeg_SCK,
-            HoldHigh        => thold_HOLDNeg_SCK,
-            CheckEnabled    => QUAD = '1'
-                               AND HOLDNegOut_zd /= HOLDNegIn,
-            RefTransition   => '/',
-            HeaderMsg       => InstancePath & PartID,
-            TimingData      => TD_HOLD_SCK,
-            Violation       => Tviol_HOLD_SCK
-        );
-
-        -- Setup/Hold Check between CS# and SCK
-        VitalSetupHoldCheck (
-            TestSignal      => CSNeg_ipd,
-            TestSignalName  => "CS#",
-            RefSignal       => SCK_ipd,
-            RefSignalName   => "SCK",
-            SetupHigh       => tsetup_CSNeg_SCK,
-            SetupLow        => tsetup_CSNeg_SCK,
-            HoldHigh        => thold_CSNeg_SCK,
-            HoldLow         => thold_CSNeg_SCK,
-            CheckEnabled    => true,
-            RefTransition   => '/',
-            HeaderMsg       => InstancePath & PartID,
-            TimingData      => TD_CS_SCK,
-            Violation       => Tviol_CS_SCK
-        );
-
-        -- Setup Check between WP# and CS# \
-        VitalSetupHoldCheck (
-            TestSignal      => WPNegIn,
-            TestSignalName  => "WP#",
-            RefSignal       => CSNeg_ipd,
-            RefSignalName   => "CS#",
-            SetupHigh       => tsetup_WPNeg_CSNeg,
-            CheckEnabled    => true,
-            RefTransition   => '\',
-            HeaderMsg       => InstancePath & PartID,
-            TimingData      => TD_WS_CS,
-            Violation       => Tviol_WS_CS
-        );
-
-        -- Hold Check between WP# and CS# /
-        VitalSetupHoldCheck (
-            TestSignal      => WPNegIn,
-            TestSignalName  => "WP#",
-            RefSignal       => CSNeg_ipd,
-            RefSignalName   => "CS#",
-            HoldHigh        => thold_WPNeg_CSNeg,
-            CheckEnabled    => SRWD = '1' AND WEL = '1' AND QUAD = '0',
-            RefTransition   => '/',
-            HeaderMsg       => InstancePath & PartID,
-            TimingData      => TD_WH_CS,
-            Violation       => Tviol_WH_CS
-        );
-
-        -- Period Check CS# for Program/Erase, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  CSNeg_ipd,
-            TestSignalName  =>  "CS#",
-            PulseWidthHigh  =>  tpw_CSNeg_pgm_posedge,
-            PeriodData      =>  PD_CS_pgm,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_CS_pgm,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  TRUE );
-
-        -- Period Check CS# for READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  CSNeg_ipd,
-            TestSignalName  =>  "CS#",
-            PulseWidthHigh  =>  tpw_CSNeg_read_posedge,
-            PeriodData      =>  PD_CS_read,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_CS_read,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  rd );
-
-        -- Period Check SCK for READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            PulseWidthLow   =>  tpw_SCK_serial_negedge,
-            PulseWidthHigh  =>  tpw_SCK_serial_posedge,
-            PeriodData      =>  PD_SCK_serial,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_serial,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  rd);
-
-        -- Period Check SCK for RDID, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            PulseWidthLow   =>  tpw_SCK_rd_jid_negedge,
-            PulseWidthHigh  =>  tpw_SCK_rd_jid_posedge,
-            PeriodData      =>  PD_SCK_rdid,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_rdid,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  rd_jid);
-
-        -- Period Check SCK for FAST_READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            PulseWidthLow   =>  tpw_SCK_serial_fast_negedge,
-            PulseWidthHigh  =>  tpw_SCK_serial_fast_posedge,
-            PeriodData      =>  PD_SCK_serial_fast,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_serial_fast,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  fast_rd );
-
-        -- Period Check SCK for DUAL_READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            PulseWidthLow   =>  tpw_SCK_dual_negedge,
-            PulseWidthHigh  =>  tpw_SCK_dual_posedge,
-            PeriodData      =>  PD_SCK_dual,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_dual,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  dual);
-
-        -- Period Check SCK for READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            Period          =>  tperiod_SCK_serial_rd,
-            PeriodData      =>  PD_SCK_serial_rd,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_serial_rd,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  rd );
-
-        -- Period Check SCK for RDID, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            Period          =>  tperiod_SCK_serial_rd_jid,
-            PeriodData      =>  PD_SCK_serial_rdid,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_serial_rdid,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  rd_jid );
-
-        -- Period Check SCK for other than READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            Period          =>  tperiod_SCK_serial_fast_rd,
-            PeriodData      =>  PD_SCK_serial_fast_rd,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_serial_fast_rd,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  fast_rd );
-
-        -- Period Check SCK for other than READ, serial mode
-        VitalPeriodPulseCheck (
-            TestSignal      =>  SCK_ipd,
-            TestSignalName  =>  "SCK",
-            Period          =>  tperiod_SCK_dual_fast_rd,
-            PeriodData      =>  PD_SCK_dual_fast_rd,
-            XOn             =>  XOn,
-            MsgOn           =>  MsgOn,
-            Violation       =>  Pviol_SCK_dual_fast_rd,
-            HeaderMsg       =>  InstancePath & PartID,
-            CheckEnabled    =>  dual );
-
-        Violation := Tviol_SI_SCK               OR
-                     Tviol_HOLD_SCK             OR
-                     Tviol_CS_SCK               OR
-                     Tviol_WS_CS                OR
-                     Tviol_WH_CS                OR
-                     Pviol_CS_read              OR
-                     Pviol_CS_pgm               OR
-                     Pviol_SCK_serial_fast      OR
-                     Pviol_SCK_dual             OR
-                     Pviol_SCK_rdid             OR
-                     Pviol_SCK_serial           OR
-                     Pviol_SCK_serial_rd        OR
-                     Pviol_SCK_serial_rdid      OR
-                     Pviol_SCK_serial_fast_rd   OR
-                     Pviol_SCK_dual_fast_rd;
-
-        Viol <= Violation;
-
-        ASSERT Violation = '0'
-            REPORT InstancePath & partID & ": simulation may be" &
-                    " inaccurate due to timing violations"
-            SEVERITY WARNING;
-
-        END IF;
-    END PROCESS VITALTimingCheck;
 
 ----------------------------------------------------------------------------
 -- sequential process for FSM state transition
@@ -2344,8 +2061,8 @@ BEGIN
             SOut_z  <= 'Z';
         ELSE
             IF hold_mode THEN
-                SIOut_z <= SIOut_zd AFTER tpd_HOLDNeg_SO(trz0);
-                SOut_z  <= SOut_zd AFTER tpd_HOLDNeg_SO(trz0);
+                SIOut_z <= SIOut_zd AFTER tpd_HOLDNeg_SO;
+                SOut_z  <= SOut_zd AFTER tpd_HOLDNeg_SO;
                 hold_mode := FALSE;
             ELSE
                 SIOut_z <= SIOut_zd;
@@ -2474,99 +2191,11 @@ BEGIN
     -- Path Delay Section
     ----------------------------------------------------------------------------
 
-    S_Out_PathDelay_Gen : PROCESS(SOut_z)
-
-            VARIABLE SO_GlitchData : VitalGlitchDataType;
-        BEGIN
-            VitalPathDelay01Z (
-                OutSignal       => SOut,
-                OutSignalName   => "PO",
-                OutTemp         => SOut_z,
-                GlitchData      => SO_GlitchData,
-                Paths           => (
-                    0 => (InputChangeTime => SCK_ipd'LAST_EVENT,
-                        PathDelay       => VitalExtendtofillDelay(tpd_SCK_SO),
-                        PathCondition   => SOut_z /= 'Z'
-                                           AND (NOT dual)),
-                    1 => (InputChangeTime => SCK_ipd'LAST_EVENT,
-                        PathDelay       => VitalExtendtofillDelay(tpd_SCK_SI),
-                        PathCondition   => SOut_z /= 'Z'
-                                           AND dual),
-                    2 => (InputChangeTime => CSNeg_ipd'LAST_EVENT,
-                        PathDelay       => tpd_CSNeg_SO,
-                        PathCondition   => CSNeg_ipd = '1'),
-                    3 => (InputChangeTime => HOLDNegIn'LAST_EVENT,
-                        PathDelay       => tpd_HOLDNeg_SO,
-                        PathCondition   => TRUE)
-                )
-            );
-        END PROCESS;
-
-    SI_Out_PathDelay : PROCESS(SIOut_z)
-
-            VARIABLE SI_GlitchData : VitalGlitchDataType;
-        BEGIN
-            VitalPathDelay01Z (
-                OutSignal       => SIOut,
-                OutSignalName   => "SI",
-                OutTemp         => SIOut_z,
-                GlitchData      => SI_GlitchData,
-                Paths           => (
-                    0 => (InputChangeTime => SCK_ipd'LAST_EVENT,
-                        PathDelay       => VitalExtendtofillDelay(tpd_SCK_SI),
-                        PathCondition   => SIOut_z /= 'Z' AND dual),
-                    1 => (InputChangeTime => CSNeg_ipd'LAST_EVENT,
-                        PathDelay       => tpd_CSNeg_SO,
-                        PathCondition   => CSNeg_ipd = '1' AND dual),
-                    2 => (InputChangeTime => HOLDNegIn'LAST_EVENT,
-                        PathDelay       => tpd_HOLDNeg_SO,
-                        PathCondition   => dual)
-                )
-            );
-        END PROCESS;
-
-    HOLD_Out_PathDelay : PROCESS(HOLDNegOut_zd)
-
-            VARIABLE HOLD_GlitchData : VitalGlitchDataType;
-        BEGIN
-            VitalPathDelay01Z (
-                OutSignal       => HOLDNegOut,
-                OutSignalName   => "HOLDNeg",
-                OutTemp         => HOLDNegOut_zd,
-                GlitchData      => HOLD_GlitchData,
-                Paths           => (
-                    0 => (InputChangeTime => SCK_ipd'LAST_EVENT,
-                        PathDelay       => VitalExtendtofillDelay(tpd_SCK_SI),
-                        PathCondition   => HOLDNegOut_zd /= 'Z' AND dual
-                                           AND QUAD = '1'),
-                    1 => (InputChangeTime => CSNeg_ipd'LAST_EVENT,
-                        PathDelay       => tpd_CSNeg_SO,
-                        PathCondition   => CSNeg_ipd = '1' AND dual
-                                           AND QUAD = '1')
-                )
-            );
-        END PROCESS;
-
-    WP_Out_PathDelay : PROCESS(WPNegOut_zd)
-
-            VARIABLE WP_GlitchData : VitalGlitchDataType;
-        BEGIN
-            VitalPathDelay01Z (
-                OutSignal       => WPNegOut,
-                OutSignalName   => "WPNeg",
-                OutTemp         => WPNegOut_zd,
-                GlitchData      => WP_GlitchData,
-                Paths           => (
-                    0 => (InputChangeTime => SCK_ipd'LAST_EVENT,
-                        PathDelay       => VitalExtendtofillDelay(tpd_SCK_SI),
-                        PathCondition   => HOLDNegOut_zd /= 'Z'AND dual
-                                           AND QUAD = '1'),
-                    1 => (InputChangeTime => CSNeg_ipd'LAST_EVENT,
-                        PathDelay       => tpd_CSNeg_SO,
-                        PathCondition   => CSNeg_ipd = '1' AND dual
-                                           AND QUAD = '1')
-                )
-            );
-        END PROCESS;
-    END BLOCK behavior;
+    SOut <= SOut_z after 1 ns;
+    SIOut <= SIOut_z after 1 ns;
+    HOLDNegOut <= HOLDNegOut_zd after 1 ns;
+    WPNegOut <= WPNegOut_zd after 1 ns;
+    
+	END BLOCK behavior;
+	
 END vhdl_behavioral;

@@ -22,8 +22,8 @@
 LIBRARY IEEE;   
 USE IEEE.std_Logic_1164.ALL;
 
-use work.VITAL_Timing.ALL;
-use work.VITAL_primitives.ALL;
+use IEEE.VITAL_Timing.ALL;
+use IEEE.VITAL_primitives.ALL;
 
 PACKAGE gen_utils IS
 

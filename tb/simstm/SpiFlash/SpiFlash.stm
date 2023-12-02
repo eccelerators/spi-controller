@@ -36,34 +36,45 @@
 	const SPI_FLASH_CMD_SFDP_RD 0x5A -- for all SpiFlash modules
 	const SPI_FLASH_CMD_DEVICE_ID_RD 0x9F -- for all SpiFlash modules
 	const SPI_FLASH_CMD_CHIP_ERASE 0xC7 -- for all SpiFlash modules
+    const SPI_FLASH_CMD_SECTOR_ERASE 0xD8 -- for all SpiFlash modules
 	   
-	const CHIP_SELECT_WINBOND_FLASH_VAL 0x0 -- for all SpiFlash modules
+	const CHIP_SELECT_SPI_FLASH_VAL 0x0 -- for all SpiFlash modules
 	const CHIP_SELECT_NONE_VAL 0xF -- for all SpiFlash modules
+	
+	const SPI_FLASH_CLK_PERIOD_NS 20 -- for all SpiFlash modules
 
 	bus SpiFlashBus 0
 
 
 spiFlashDefaultTest:
 proc
-    log message $INFO_1 "WINBOND SPI FLASH TEST"
+    log message $INFO_1 "INFINEON SPI FLASH TEST"
     
+    log message $INFO_2 "Waiting for flash power up"
+    
+    wait 31000
+
     log message $INFO_2 "Activating SPI controller"
     equ ControlRegActivationMVal $ActivatedMVal
     call $setControlRegActivationMVal
     equ StatusRegOperationMValToWaitFor $IdleMVal
     call $waitForStatusRegOperationMVal
-    
+
     log message $INFO_2 "Read SPI flash JEDEC ID"
     call $readFlashId
-
-    log message $INFO_2 "Dump SPI flash SFDP data"
-    call $readFlashSfdp 
-    array pointer copy ArrayToDump ReadFlashSfdpArray
-    call $arrayDump
     
-    log message $INFO_2 "Erase SPI flash chip"
-    call $eraseFlashChip
+    -- log message $INFO_2 "Dump SPI flash SFDP data"
+    -- call $readFlashSfdp 
+    -- array pointer copy ArrayToDump ReadFlashSfdpArray
+    -- call $arrayDump
+
+    log message $INFO_2 "Erase SPI flash sector 0"
+    call $eraseFlashSector
     call $waitForReadFlashStatusNotBusy
+    
+    -- log message $INFO_2 "Erase SPI flash chip"
+    -- call $eraseFlashChip
+    -- call $waitForReadFlashStatusNotBusy
     
     log message $INFO_2 "Write SPI flash page 0 with 0,1,2 ..."
     array pointer copy ArrayToFill WriteFlashPageArray

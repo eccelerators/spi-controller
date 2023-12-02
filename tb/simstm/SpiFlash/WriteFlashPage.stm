@@ -59,7 +59,7 @@ proc
     call $setCmdSetClkPolarityMVal
     equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
     call $setCmdSetClkPhaseMVal
-    equ CmdSetClkPeriodVal 20
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
     call $setCmdSetClkPeriodVal
     
     add CmdAddress 0x004 
@@ -67,13 +67,13 @@ proc
     call $setCmdWaitWaitNsVal
     
     add CmdAddress 0x004 
-    equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
+    equ CmdSetChipSelectVal $CHIP_SELECT_SPI_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
     call $setCmdSetClkPolarityMVal
     equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
     call $setCmdSetClkPhaseMVal
-    equ CmdSetClkPeriodVal 20
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
     call $setCmdSetClkPeriodVal
 
     add CmdAddress 0x004 
@@ -93,7 +93,7 @@ proc
     call $setCmdSetClkPolarityMVal
     equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
     call $setCmdSetClkPhaseMVal
-    equ CmdSetClkPeriodVal 20
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
     call $setCmdSetClkPeriodVal
     
     add CmdAddress 0x004 
@@ -101,13 +101,13 @@ proc
     call $setCmdWaitWaitNsVal
     
     add CmdAddress 0x004 
-    equ CmdSetChipSelectVal $CHIP_SELECT_WINBOND_FLASH_VAL 
+    equ CmdSetChipSelectVal $CHIP_SELECT_SPI_FLASH_VAL 
     call $setCmdSetChipSelectVal
     equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
     call $setCmdSetClkPolarityMVal
     equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
     call $setCmdSetClkPhaseMVal
-    equ CmdSetClkPeriodVal 20
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
     call $setCmdSetClkPeriodVal
     
     add CmdAddress 0x004 

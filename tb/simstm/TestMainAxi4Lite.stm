@@ -56,6 +56,7 @@ include "SpiFlash/ReadFlashStatus.stm"
 include "SpiFlash/ReadFlashPage.stm"
 include "SpiFlash/WriteFlashPage.stm"
 include "SpiFlash/EraseFlashChip.stm"
+include "SpiFlash/EraseFlashSector.stm"
 
 include "Tests/TestSpiFlash.stm"
 
@@ -78,7 +79,7 @@ proc
 	call $CellBufferIfcInit
 	
 	verbosity $INFO_2
-	trace 0
+	trace 0x00
 	wait 1000
 	log message $INFO "Main test started"
 	log message $INFO_3 "HwBufferMask: {}" $HwBufferMask

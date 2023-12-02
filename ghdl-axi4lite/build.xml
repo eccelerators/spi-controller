@@ -37,12 +37,13 @@
 		elaborate
 		" description="compile all" />
   
+   	<target name="start_ghdl_docker" description="compile all" >	
+		<exec executable="docker">
+			<arg line="run -it -v ${PWD}:/work -w /work ghdl/ghdl:ubuntu22-llvm-11" />
+		</exec>
+	 </target>	
    
    <target name="compile" depends="
-     -do_compile_tb-ip_hdl_vital95__vital_timing.vhdl,
-     -do_compile_tb-ip_hdl_vital95__vital_timing-body.vhdl,
-     -do_compile_tb-ip_hdl_vital95__vital_primitives.vhdl,
-     -do_compile_tb-ip_hdl_vital95__vital_primitives-body.vhdl,
      -do_compile_tb-ip_hdl_Infineon_s25fl129p00__conversions.vhd,
      -do_compile_tb-ip_hdl_Infineon_s25fl129p00__gen_utils.vhd,
      -do_compile_tb-ip_hdl_Infineon_s25fl129p00__s25fl129p00.vhd,

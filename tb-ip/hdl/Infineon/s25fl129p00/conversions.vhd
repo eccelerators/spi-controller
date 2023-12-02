@@ -60,7 +60,6 @@ LIBRARY IEEE;   USE IEEE.std_logic_1164.ALL;
 --  -----------------|---------------|
 --  std_logic_vector |    to_int     |
 --------------------------------------------------------------------------------
-USE     WORK.VITAL_Timing.ALL;
 
 PACKAGE conversions IS
   

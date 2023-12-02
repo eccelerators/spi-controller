@@ -39,7 +39,9 @@
   
    
    <target name="compile" depends="
-     -do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v,
+     -do_compile_tb-ip_hdl_Infineon_s25fl129p00__conversions.vhd,
+     -do_compile_tb-ip_hdl_Infineon_s25fl129p00__gen_utils.vhd,
+     -do_compile_tb-ip_hdl_Infineon_s25fl129p00__s25fl129p00.vhd,
      -do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcPackage.vhd,
      -do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcAxi4Lite.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg.vhd,
@@ -75,9 +77,22 @@
       </exec>
    </target>
    
-   <target name="-do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v" description="compile W25Q128JVxIM.v">
-      <exec executable="${MODELSIM_BIN_DIR}/vlog" failonerror="true">
-         <arg value="./../tb-ip/hdl/Winbond/W25Q128JVxIM/W25Q128JVxIM.v"/>
+   <target name="-do_compile_tb-ip_hdl_Infineon_s25fl129p00__conversions.vhd" description="compile conversions.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Infineon/s25fl129p00/conversions.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Infineon_s25fl129p00__gen_utils.vhd" description="compile gen_utils.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Infineon/s25fl129p00/gen_utils.vhd"/>
+      </exec>
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Infineon_s25fl129p00__s25fl129p00.vhd" description="compile s25fl129p00.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Infineon/s25fl129p00/s25fl129p00.vhd"/>
       </exec>
    </target>
    <target name="-do_compile_ip_hdl_axi4lite_ram_bridge__RamIfcPackage.vhd" description="compile RamIfcPackage.vhd">

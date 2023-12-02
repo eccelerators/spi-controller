@@ -1,0 +1,169 @@
+-- ******************************************************************************
+-- 
+--                   /------o
+--             eccelerators
+--          o------/
+-- 
+--  This file is an Eccelerators GmbH sample project.
+-- 
+--  MIT License:
+--  Copyright (c) 2023 Eccelerators GmbH
+-- 
+--  Permission is hereby granted, free of charge, to any person obtaining a copy
+--  of this software and associated documentation files (the "Software"), to deal
+--  in the Software without restriction, including without limitation the rights
+--  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--  copies of the Software, and to permit persons to whom the Software is
+--  furnished to do so, subject to the following conditions:
+-- 
+--  The above copyright notice and this permission notice shall be included in all
+--  copies or substantial portions of the Software.
+-- 
+--  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+--  SOFTWARE.
+-- ******************************************************************************
+
+    -- global
+		-- var CmdAddress from Cmd.stm
+		-- var SpiFlashBus from Cmd.stm
+	-- parameter variables
+	var EraseFlashSectorSectorAddress 0
+	array EraseFlashSectorArray 256
+	-- intern variables
+	var EraseFlashSectorTmpVal 0
+	-- result variables
+
+    
+eraseFlashSector:
+proc
+    wait 3000
+
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    call $zeroCellBuffer
+    equ CmdAddress $CellBufferAddress
+    equ CmdConfigReceiveFrameStartAddressVal 0x180
+    call $setCmdConfigReceiveFrameStartAddressVal
+    
+    add CmdAddress 0x004 
+    equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
+    call $setCmdSetClkPeriodVal
+    
+    add CmdAddress 0x004 
+    equ CmdWaitWaitNsVal 40
+    call $setCmdWaitWaitNsVal
+    
+    add CmdAddress 0x004 
+    equ CmdSetChipSelectVal $CHIP_SELECT_SPI_FLASH_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
+    call $setCmdSetClkPeriodVal
+
+    add CmdAddress 0x004 
+    equ CmdTransmitPacketMultiplierVal 1
+    call $setCmdTransmitPacketMultiplierVal   
+    equ CmdTransmitPacketLengthVal 1
+    call $setCmdTransmitPacketLengthVal 
+    
+    add CmdAddress 0x004 
+    -- cmd byte write enable
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_WRITE_ENABLE
+    
+    add CmdAddress 0x004 
+    equ CmdSetChipSelectVal $CHIP_SELECT_NONE_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
+    call $setCmdSetClkPeriodVal
+    
+    add CmdAddress 0x004 
+    equ CmdWaitWaitNsVal 100
+    call $setCmdWaitWaitNsVal
+    
+    add CmdAddress 0x004 
+    equ CmdSetChipSelectVal $CHIP_SELECT_SPI_FLASH_VAL 
+    call $setCmdSetChipSelectVal
+    equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+    call $setCmdSetClkPhaseMVal
+    equ CmdSetClkPeriodVal $SPI_FLASH_CLK_PERIOD_NS
+    call $setCmdSetClkPeriodVal
+    
+    add CmdAddress 0x004 
+    equ CmdTransmitPacketMultiplierVal 1
+    call $setCmdTransmitPacketMultiplierVal   
+    equ CmdTransmitPacketLengthVal 4
+    call $setCmdTransmitPacketLengthVal 
+
+    add CmdAddress 0x004 
+    -- cmd byte write page
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_SECTOR_ERASE
+    add CmdAddress 0x001
+    -- cmd page address byte 0 MSB
+    equ EraseFlashSectorTmpVal $EraseFlashSectorSectorAddress
+    div EraseFlashSectorTmpVal 65536 
+    and EraseFlashSectorTmpVal 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
+    -- cmd page address byte 1
+    equ EraseFlashSectorTmpVal $EraseFlashSectorSectorAddress
+    div EraseFlashSectorTmpVal 256 
+    and EraseFlashSectorTmpVal 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
+    add CmdAddress 0x001
+    -- cmd page address byte 2 LSB
+    equ EraseFlashSectorTmpVal $EraseFlashSectorSectorAddress
+    and EraseFlashSectorTmpVal 0xFF
+    bus write SpiFlashBus 8 $CmdAddress 0
+       
+    log message 0 "CmdAddress {}" $CmdAddress
+    equ CmdWaitWaitNsVal 40
+    call $setCmdWaitWaitNsVal
+      
+    add CmdAddress 0x004 
+    equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
+    call $setCmdEndAutoRestartMVal
+    
+    equ ControlRegSwBufferMVal $PreparedMVal
+    call $setControlRegSwBufferMVal 
+    -- send buffer 0 
+      
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    
+    call $zeroCellBuffer
+    equ CmdAddress 0x000
+    equ CmdEndAutoRestartMVal $CmdEndCell_NotRestartingMVal
+    call $setCmdEndAutoRestartMVal
+    
+    equ ControlRegSwBufferMVal $PreparedMVal
+    call $setControlRegSwBufferMVal
+    -- send buffer 1 
+    
+    equ StatusRegHwBufferMValToWaitFor $AvailableMVal
+    call $waitForStatusRegHwBufferMVal
+    -- wait for buffer 0     
+     
+end proc
+
+
+
