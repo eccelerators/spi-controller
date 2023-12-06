@@ -46,6 +46,7 @@ cd ..
 
 echo "start simulation"
 ./work/tb_top_wishbone --vcd=./trace.vcd --stop-time=10000000ns
+#./work/tb_top_wishbone --vcd=./trace.vcd --stop-time=100000ns
 
 # echo "show waveforms"
 # gtk-wave gtk-waves.gtkw ./trace.vcd
