@@ -55,6 +55,7 @@ include "SpiFlash/ReadFlashStatus.stm"
 include "SpiFlash/ReadFlashPage.stm"
 include "SpiFlash/WriteFlashPage.stm"
 include "SpiFlash/EraseFlashChip.stm"
+include "SpiFlash/EraseFlashSector.stm"
 
 include "Tests/TestSpiFlash.stm"
 
@@ -62,7 +63,7 @@ include "Tests/TestSpiFlash.stm"
 bus wishbone 0
 bus avalon 1
 bus axi4lite 2
-var WaitTimeOut 100000 -- ms
+var WaitTimeOut 10000 -- * 10000 * 10 ms = 100s timeout, loops poll in 10us intervals
 
 Main:
 proc
@@ -82,7 +83,12 @@ proc
 	log message $INFO "Main test started"
 	log message $INFO_3 "HwBufferMask: {}" $HwBufferMask
 	
-	call $testSpiFlash
+	equ SPI_FLASH_CLK_PERIOD_NS 20
+	loop 1
+		call $testSpiFlash
+		add SPI_FLASH_CLK_PERIOD_NS 20
+	end loop
+	equ SPI_FLASH_CLK_PERIOD_NS 20
 	
 	log message $INFO "Main test finished"
 	wait 1000

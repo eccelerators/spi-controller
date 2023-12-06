@@ -3,7 +3,7 @@
    <property environment="env"/>
    <property name="MODELSIM_BIN_DIR" value="/opt/intelFPGA/20.1/modelsim_ase/bin"/>
    <property name="ROOT_DIR" value="./../"/>
-   <property name="MODELSIM_RUN_DIR" value="${ROOT_DIR}/modelsim-avalon"/>
+   <property name="MODELSIM_RUN_DIR" value="${ROOT_DIR}/modelsim-avalon_winbond_spi_flash"/>
    <property name="MODELSIM_LIBRARIES_DIR" value="${MODELSIM_RUN_DIR}/libraries"/>
    <property name="TOP_LEVEL_NAME" value="work.tb_top_avalon"/>
    
@@ -59,7 +59,7 @@
      -do_compile_src_vhdl__CmdProcessor.vhd,
      -do_compile_src_vhdl__Phy.vhd,
      -do_compile_src_vhdl__SpiControllerWithAvalonBus.vhd,
-     -do_compile_tb_hdl__tb_top_avalon.vhd"
+     -do_compile_tb_hdl__tb_top_avalon_winbond_spi_flash.vhd"
          description="CompileAll"/>
          
    <target name="elaborate" description="ElabLinux">
@@ -203,10 +203,10 @@
          <arg value="./../tb/hdl/tb_pkg_signals.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb_hdl__tb_top_avalon.vhd" description="compile tb_top_avalon.vhd">
+   <target name="-do_compile_tb_hdl__tb_top_avalon_winbond_spi_flash.vhd" description="compile tb_top_avalon_winbond_spi_flash.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb/hdl/tb_top_avalon.vhd"/>
+         <arg value="./../tb/hdl/tb_top_avalon_winbond_spi_flash.vhd"/>
       </exec>
    </target>
    

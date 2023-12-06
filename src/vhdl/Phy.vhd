@@ -32,123 +32,126 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Phy is
-	generic(ClkPeriodIn16thNs : natural);
-	port(
-		Clk : in std_logic;
-		Rst : in std_logic;
-		SClk : out std_logic;
-		MiSo : in std_logic;
-		MoSi : out std_logic;
-		DoTransceivePulse : in std_logic;
-		ReleaseTxDataPulse : out std_logic;
-		StoreRxDataPulse : out std_logic;
-		TxByte : in std_logic_vector(7 downto 0);
-		RxByte : out std_logic_vector(7 downto 0);
-		CPol : in std_logic;
-		CPha : in std_logic;
-		SClkPeriodInNs : in std_logic_vector(9 downto 0)
-	);
+    generic(ClkPeriodIn16thNs : natural);
+    port(
+        Clk : in std_logic;
+        Rst : in std_logic;
+        SClk : out std_logic;
+        MiSo : in std_logic;
+        MoSi : out std_logic;
+        FetchTxBytePulse : in std_logic;
+        ReadyToFetchTxByte : out std_logic;
+        FetchRxBytePulse : out std_logic;
+        RxByteIsPending : out std_logic;
+        TxByte : in std_logic_vector(7 downto 0);
+        RxByte : out std_logic_vector(7 downto 0);
+        CPol : in std_logic;
+        CPha : in std_logic;
+        SClkPeriodInNs : in std_logic_vector(9 downto 0)
+    );
 end entity;
 
 architecture RTL of Phy is
 
-	function add(count_in : in unsigned (13 downto 0); count_add : in unsigned (13 downto 0)) return unsigned is
-		variable count_out : unsigned(13 downto 0);
-	begin
-		if resize(count_in, 15) + ClkPeriodIn16thNs < resize(count_add, 15) * 8 then
-			count_out := count_in + ClkPeriodIn16thNs;
-		else
-			count_out := (others => '0');
-		end if;
-		return count_out;
-	end function;
+    procedure incStretchCount(signal StretchCount16thNs : inout unsigned (14 downto 0); SClkPeriodNs : in unsigned (9 downto 0)) is
+        variable NextStretchCount16thNs : unsigned(15 downto 0);
+        variable SClkHalfPeriodNs16th : unsigned(14 downto 0);
+    begin
+        SClkHalfPeriodNs16th := resize(SClkPeriodNs * 8, 15);
+        NextStretchCount16thNs := resize(StretchCount16thNs, 16) + to_unsigned(ClkPeriodIn16thNs, 16);
+        if NextStretchCount16thNs >= SClkHalfPeriodNs16th then
+            StretchCount16thNs <= to_unsigned(0, 15);
+        else
+            StretchCount16thNs <= resize(NextStretchCount16thNs, 15);
+        end if;
+    end procedure;
 
-	signal TranceiveCount : unsigned(3 downto 0);
-	signal StretchCount : unsigned(13 downto 0);
-	signal TxShiftReg : std_logic_vector(7 downto 0);
-	signal RxShiftReg : std_logic_vector(7 downto 0);
+    signal TranceiveCount : unsigned(4 downto 0);
+    signal StretchCount16thNs : unsigned(14 downto 0);
+    signal TxReg : std_logic_vector(7 downto 0);
+    signal RxReg : std_logic_vector(7 downto 0);
+    signal SclkP : std_logic;
+    signal FetchedTxByte : std_logic_vector(7 downto 0);
+    signal FetchedTxByteIsPending : std_logic;
 
 begin
 
-	MoSi <= TxShiftReg(7);
-	RxByte <= RxShiftReg;
+    Sclk <= SclkP xor CPol;
+    RxByte <= RxReg;
 
-	prcSpiTransceive : process(Clk, Rst) is
-	begin
-		if Rst = '1' then
-			SClk <= '0';
-			ReleaseTxDataPulse <= '0';
-			StoreRxDataPulse <= '0';
-			TranceiveCount <= to_unsigned(15, 4);
-			RxShiftReg <= b"0000_0000";
-			TxShiftReg <= b"0000_0000";
-			StretchCount <= (others => '0');
-		elsif rising_edge(Clk) then
-			ReleaseTxDataPulse <= '0'; -- default assignment		
-			StoreRxDataPulse <= '0'; -- default assignment	
-			if DoTransceivePulse then
-				TxShiftReg <= TxByte;
-				if CPha then
-					SClk <= not CPol;
-				end if;
-				StretchCount <= add(to_unsigned(0, 14), resize(unsigned(SClkPeriodInNs), 14));
-				TranceiveCount <= to_unsigned(0, 4);
-			else
-				if TranceiveCount < to_unsigned(15, 4) then
-					StretchCount <= add(StretchCount, resize(unsigned(SClkPeriodInNs), 14));
-					if StretchCount = 0 then
-						TranceiveCount <= TranceiveCount + 1;
-						if TranceiveCount = 0 then
-							if not CPha then
-								SClk <= not CPol;
-							end if;
-							RxShiftReg(0) <= MiSo;
-						elsif TranceiveCount = 1 then
-							SClk <= not SClk;
-							TxShiftReg(7 downto 1) <= TxShiftReg(6 downto 0);
-						elsif TranceiveCount = 2 
-						     or TranceiveCount = 4 
-						     or TranceiveCount = 6 
-						     or TranceiveCount = 8 
-						     or TranceiveCount = 10 
-						     or TranceiveCount = 12  then
-							SClk <= not SClk;
-							RxShiftReg(7 downto 1) <= RxShiftReg(6 downto 0);
-							RxShiftReg(0) <= MiSo;
-                        elsif TranceiveCount = 3 
-                             or TranceiveCount = 5 
-                             or TranceiveCount = 7 
-                             or TranceiveCount = 9 
-                             or TranceiveCount = 11  then					
-							SClk <= not SClk;
-							TxShiftReg(7 downto 1) <= TxShiftReg(6 downto 0);
-						elsif TranceiveCount = 13 then
-							SClk <= not SClk;
-							TxShiftReg(7 downto 1) <= TxShiftReg(6 downto 0);
-							ReleaseTxDataPulse <= '1';
-						elsif TranceiveCount = 14 then
-							SClk <= not SClk;
-							RxShiftReg(7 downto 1) <= RxShiftReg(6 downto 0);
-							RxShiftReg(0) <= MiSo;
-							StoreRxDataPulse <= '1';
-						end if;
-					end if;
-				else
-					if StretchCount = 0 then
-						SClk <= CPol;
-					end if;	
-				end if;
-			end if;
-		end if;
-	end process;
+    prcSpiTransceive : process(Clk, Rst) is
+    begin
+        if Rst = '1' then
+            SclkP <= '0';
+            MoSi <= '0';
+            ReadyToFetchTxByte <= '1';
+            FetchRxBytePulse <= '0';
+            TranceiveCount <= to_unsigned(30, 5);
+            RxReg <= b"0000_0000";
+            TxReg <= b"0000_0000";
+            StretchCount16thNs <= (others => '0');
+            FetchedTxByte <= (others => '0');
+            FetchedTxByteIsPending <= '0';
+            RxByteIsPending <= '0';
+        elsif rising_edge(Clk) then
+            FetchRxBytePulse <= '0'; -- default assignment
+            if TranceiveCount /= 30 or StretchCount16thNs /= 0 then
+                incStretchCount(StretchCount16thNs, unsigned(SClkPeriodInNs));
+            end if;
+            if FetchTxBytePulse then
+                FetchedTxByte <= TxByte;
+                FetchedTxByteIsPending <= '1';
+                ReadyToFetchTxByte <= '0';
+            end if;
+            
+            if TranceiveCount = 30 then
+                if FetchedTxByteIsPending then
+                    TxReg <= FetchedTxByte;
+                    ReadyToFetchTxByte <= '1';
+                    if Cpha = '0' then
+                        TranceiveCount <= to_unsigned(31, 5);
+                    else
+                        TranceiveCount <= to_unsigned(31, 5);
+                    end if;
+                    FetchedTxByteIsPending <= '0';
+                    RxByteIsPending <= '1';
+                end if;
+            elsif TranceiveCount = 31 then
+                MoSi <= TxReg(7);
+                TranceiveCount <= to_unsigned(0, 5);
+            else
+                if StretchCount16thNs = 0 then
+                    case to_integer(TranceiveCount) is
+                        when 0 | 2 | 4 | 6 | 8 | 10 | 12 =>
+                            RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                            SclkP <= '1';
+                            TranceiveCount <= TranceiveCount + 1;
+                        when 14 =>
+                            RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                            SclkP <= '1';
+                            FetchRxBytePulse <= '1';
+                            TranceiveCount <= TranceiveCount + 1;
+                        when 1 | 3 | 5 | 7 | 9 | 11 | 13 =>
+                            MoSi <= TxReg(6 - to_integer(TranceiveCount(3 downto 1)));
+                            SclkP <= '0';
+                            TranceiveCount <= TranceiveCount + 1;
+                        when others =>
+                            SclkP <= '0';
+                            RxByteIsPending <= '0';
+                            TranceiveCount <= to_unsigned(30, 5);
+                    end case;
+                end if;
+            end if;
+        end if;
+    end process;
 
 end architecture;
 
--- SPI Mode CPOL CPHA 	Clock Polarity in Idle State 	Clock Phase Used to Sample and/or Shift the Data
---    0 	 0 	  0 	Logic low 	                    Data sampled on rising edge and shifted out on the falling edge
---    1 	 0 	  1 	Logic low 	                    Data sampled on the falling edge and shifted out on the rising edge
---    2 	 1 	  0 	Logic high                   	Data sampled on the rising edge and shifted out on the falling edge
---    3 	 1 	  1 	Logic high 	                    Data sampled on the falling edge and shifted out on the rising edge
+-- SPI Mode CPOL CPHA     Clock Polarity in Idle State     Clock Phase Used to Sample and/or Shift the Data
+--    0      0       0     Logic low                         Data sampled on rising edge and shifted out on the falling edge
+--    1      0       1     Logic low                         Data sampled on the falling edge and shifted out on the rising edge
+--    2      1       0     Logic high                       Data sampled on the rising edge and shifted out on the falling edge
+--    3      1       1     Logic high                         Data sampled on the falling edge and shifted out on the rising edge
 
 -- SPIMode=0, CPOL=0, CPHA=0, Data sampled on rising edge and shifted out on the falling edge
 --                                        15   #   0   #   1   #   2   #   3   #   4   #   5   #   6   #   7   #   8   #   9   #  10   #   11  #   12  #   13  #   14  #   15  #   0   #   1   #   2   #   3   #   4   #   5   #   6   #   7   #   8   #   9   #  10   #   11  #   12  #   13  #   14  #   15         
@@ -161,14 +164,17 @@ end architecture;
 --                                     ._______:       .       :                                                                                               .       :_______.                                                                                                               .       :       .        
 -- DoTransceivePulse    _______________|       |_______________________________________________________________________________________________________________________|       |___________________________________________________________________________________________________________________________________________________
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
---                                     .       :       .       :                                                                                               ._______:       .                                                                                                               ._______:       .        
--- ReleaseTxDataPulse   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
+--                      _______________________               .       :       .       :                                                                        ._______:       .                                                                                                               .___________________________________
+-- ReadyToFetchTxByte                     .       |_______________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       :       .                       
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                     .       :       .       :                                                                                               .       :_______.                                                                                                       .       .       ._______.
 -- StoreRxDataPulse     _______________________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |__________________
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                      _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________.___________________ 
 -- TxByte               _|_|_|_|_|_|_|_|__n____|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__n+1__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_
+--                                             :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
+--                      _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________.___________________ 
+-- TxReg                ________________n-1____|_________________________________________________________________n_____________________________________________________________|__n+1__________________________________________________________________________________________________________________________|___________n+2_____
 --                                             :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                             :       ._______:        _______         _______         _______         _______         _______         _______        :_______.        _______         _______         _______         _______         _______         _______         _______        :_______.        
 -- SClk                 _______________________________|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |_______|       |___________________ 
@@ -185,7 +191,10 @@ end architecture;
 --                      _______________________:_______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________.___________________
 -- RxByte               _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|____n__|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|__n+1__|_|_|_|_|_|_|_|_|_|_
 --
---
+--                      _______________________:_______._______:__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________.___________________ 
+-- RxReg                _________________________________________________________________________________n_-1__________________________________________________________________|__n____________________________________________________________________________________________________________________________|__n+1______________________
+-- 
+-- 
 -- ********************************************************************************************************************************************************************************************************************************************************************************************************************************
 --                                                                                                                                                                                                                                                                                                                                 
 -- SPIMode=2, CPOL=1, CPHA=0,  Data sampled on the rising edge and shifted out on the falling edge
@@ -200,7 +209,7 @@ end architecture;
 -- DoTransceivePulse    _______________|       |_______________________________________________________________________________________________________________________|       |___________________________________________________________________________________________________________________________________________________
 --                                     .       :       .       :                                                                                                       :       .                                                                                                               .       :       :        
 --                                     .       :       .       :                                                                                               ._______:       .                                                                                                               ._______:       .        
--- ReleaseTxDataPulse   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
+-- ReadyToFetchTxByte   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                     .       :       .       :                                                                                               .       :_______.                                                                                                       .       .       ._______.
 -- StoreRxDataPulse     _______________________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________
@@ -238,7 +247,7 @@ end architecture;
 -- DoTransceivePulse    _______________|       |_______________________________________________________________________________________________________________________|       |___________________________________________________________________________________________________________________________________________________
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                     .       :       .       :                                                                                               ._______:       .                                                                                                               ._______:       .        
--- ReleaseTxDataPulse   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
+-- ReadyToFetchTxByte   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                     .       :       .       :                                                                                               .       :_______.                                                                                                               .       ._______.
 -- StoreRxDataPulse     _______________________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |__________________
@@ -276,7 +285,7 @@ end architecture;
 -- DoTransceivePulse    _______________|       |_______________________________________________________________________________________________________________________|       |___________________________________________________________________________________________________________________________________________________
 --                                     .       :       .       :                                                                                                       :       .                                                                                                               .       :       :        
 --                                     .       :       .       :                                                                                               ._______:       .                                                                                                               ._______:       .        
--- ReleaseTxDataPulse   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
+-- ReadyToFetchTxByte   _______________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________________    
 --                                     .       :       .       :                                                                                               .       :       .                                                                                                               .       :       .        
 --                                     .       :       .       :                                                                                               .       :_______.                                                                                                       .       .       ._______.
 -- StoreRxDataPulse     _______________________________________________________________________________________________________________________________________________|       |_______________________________________________________________________________________________________________________|       |___________________

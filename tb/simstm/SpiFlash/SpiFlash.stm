@@ -36,19 +36,20 @@
 	const SPI_FLASH_CMD_SFDP_RD 0x5A -- for all SpiFlash modules
 	const SPI_FLASH_CMD_DEVICE_ID_RD 0x9F -- for all SpiFlash modules
 	const SPI_FLASH_CMD_CHIP_ERASE 0xC7 -- for all SpiFlash modules
-    const SPI_FLASH_CMD_SECTOR_ERASE 0xD8 -- for all SpiFlash modules
+    const SPI_FLASH_CMD_BLOCK_ERASE 0xD8 -- for all SpiFlash modules
+    const SPI_FLASH_CMD_SECTOR_ERASE 0x20 -- for all SpiFlash modules
 	   
 	const CHIP_SELECT_SPI_FLASH_VAL 0x0 -- for all SpiFlash modules
 	const CHIP_SELECT_NONE_VAL 0xF -- for all SpiFlash modules
 	
-	const SPI_FLASH_CLK_PERIOD_NS 20 -- for all SpiFlash modules
+	var SPI_FLASH_CLK_PERIOD_NS 20 -- for all SpiFlash modules
 
 	bus SpiFlashBus 0
 
 
 spiFlashDefaultTest:
 proc
-    log message $INFO_1 "INFINEON SPI FLASH TEST"
+    log message $INFO_1 "SPI FLASH TEST"
     
     log message $INFO_2 "Waiting for flash power up"
     
@@ -63,18 +64,29 @@ proc
     log message $INFO_2 "Read SPI flash JEDEC ID"
     call $readFlashId
     
-    -- log message $INFO_2 "Dump SPI flash SFDP data"
-    -- call $readFlashSfdp 
-    -- array pointer copy ArrayToDump ReadFlashSfdpArray
-    -- call $arrayDump
+    if $ReadFlashIdVal = 0xEF7018
+    	log message $INFO_1 "FOUND WINBOND SPI FLASH: W25Q128JVxIM"
+    	log message $INFO_2 "Dump SPI flash SFDP data"
+    	call $readFlashSfdp 
+    	array pointer copy ArrayToDump ReadFlashSfdpArray
+    	call $arrayDump
+    elsif $ReadFlashIdVal = 0x012018    
+    	log message $INFO_1 "FOUND INFINEON SPI FLASH: S25FL129P00"
+    else	
+        log message $ERROR "SPI flash unknown !"
+    	abort
+    end if
 
-    log message $INFO_2 "Erase SPI flash sector 0"
-    call $eraseFlashSector
-    call $waitForReadFlashStatusNotBusy
-    
-    -- log message $INFO_2 "Erase SPI flash chip"
-    -- call $eraseFlashChip
-    -- call $waitForReadFlashStatusNotBusy
+    if $ReadFlashIdVal = 0xEF7018
+        -- Strange sector or block erase timeout with winbond ...
+	    log message $INFO_2 "Erase SPI flash chip"
+	    call $eraseFlashChip
+	    call $waitForReadFlashStatusNotBusy
+    else   
+      	log message $INFO_2 "Erase SPI flash sector 0"
+    	call $eraseFlashSector
+    	call $waitForReadFlashStatusNotBusy
+    end if
     
     log message $INFO_2 "Write SPI flash page 0 with 0,1,2 ..."
     array pointer copy ArrayToFill WriteFlashPageArray
@@ -90,6 +102,14 @@ proc
     call $readFlashPage 
     array pointer copy ArrayToDump ReadFlashPageArray
     call $arrayDump
+    
+    array pointer copy ArrayCompare0 WriteFlashPageArray
+    array pointer copy ArrayCompare1 ReadFlashPageArray
+    call $arrayCompare
+    if $ArrayCompareEquality = 0
+    	log message $ERROR "SPI flash page written content differs from read content !"
+    	abort
+    end if
     
     log message $INFO_2 "Deactivating SPI controller"
     equ ControlRegActivationMVal $DeActivatedMVal

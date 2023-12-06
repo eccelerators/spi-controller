@@ -116,7 +116,7 @@ proc
 
     add CmdAddress 0x004 
     -- cmd byte write page
-    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_SECTOR_ERASE
+    bus write SpiFlashBus 8 $CmdAddress $SPI_FLASH_CMD_BLOCK_ERASE
     add CmdAddress 0x001
     -- cmd page address byte 0 MSB
     equ EraseFlashSectorTmpVal $EraseFlashSectorSectorAddress

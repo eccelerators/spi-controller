@@ -1,0 +1,13 @@
+*
+!.gitignore
+!build.xml
+!modelsim.ini
+!gtk-waves.gtkw
+!run-gtkwave.sh
+!run.sh
+!run-vcd.sh
+!start-ghdl-docker.sh
+
+
+
+

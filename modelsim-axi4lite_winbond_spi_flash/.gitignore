@@ -1,0 +1,6 @@
+*
+!.gitignore
+!build.xml
+!modelsim.ini
+!wave.do
+

@@ -52,6 +52,40 @@ proc
     end loop        
 end proc
 
+
+	-- parameter variables
+	array ArrayCompare0 1
+	array ArrayCompare1 1
+	-- intern variables
+	var ArrayCompareIndex 0
+	var ArrayCompareSize0 0
+	var ArrayCompareSize1 0
+	var ArrayCompareTmpVal0 0
+	var ArrayCompareTmpVal1 0
+	-- result variables
+	var ArrayCompareEquality 0
+	
+arrayCompare:
+proc
+    equ ArrayCompareIndex 0
+    equ ArrayCompareEquality 1
+    array size ArrayCompare0 ArrayCompareSize0
+    array size ArrayCompare1 ArrayCompareSize1
+    if $ArrayCompareSize0 != $ArrayCompareSize1
+    	log message $INFO "arrayCompare: arrays differ in size, size0:{}, size1{}" $ArrayCompareSize0 $ArrayCompareSize1
+    	equ ArrayCompareEquality 0
+	else
+	    loop $ArrayCompareSize0
+	        array get ArrayCompare0 $ArrayCompareIndex ArrayCompareTmpVal0
+	        array get ArrayCompare1 $ArrayCompareIndex ArrayCompareTmpVal1
+		    if $ArrayCompareSize0 != $ArrayCompareSize1
+		    	log message $INFO "arrayCompare: arrays differ at index, value0:{}, value1{}" $ArrayCompareIndex $ArrayCompareSize0 $ArrayCompareSize1
+		    	equ ArrayCompareEquality 0
+		    end if
+	        add ArrayCompareIndex 1    
+	    end loop
+    end if
+end proc
  
     -- global
 	-- parameter variables
@@ -82,7 +116,7 @@ proc
     mul ArrayDumpDoneInLoop 8
     equ ArrayDumpRemaining $ArrayDumpSize
     sub ArrayDumpRemaining $ArrayDumpDoneInLoop
-    log message 0 "array: dump "  
+    log message 0 "array: dump "
     equ ArrayDumpIndex 0
     loop $ArrayDumpLoopNumber        
         array get ArrayToDump $ArrayDumpIndex ArrayDumpVal0

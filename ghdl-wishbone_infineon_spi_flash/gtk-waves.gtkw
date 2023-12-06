@@ -1,0 +1,154 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Wed Dec  6 15:55:24 2023
+[*]
+[dumpfile] "/home/dev/git/eccelerators/spi-controller/ghdl-wishbone_infineon_spi_flash/trace.vcd"
+[dumpfile_mtime] "Wed Dec  6 15:53:40 2023"
+[dumpfile_size] 1018706
+[savefile] "/home/dev/git/eccelerators/spi-controller/ghdl-wishbone_infineon_spi_flash/gtk-waves.gtkw"
+[timestart] 58289600000
+[size] 3333 1784
+[pos] 358 37
+*-26.510778 58915000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_top_wishbone.
+[treeopen] tb_top_wishbone.i_s25fl129p00.
+[treeopen] tb_top_wishbone.i_spicontroller.
+[sst_width] 233
+[signals_width] 427
+[sst_expanded] 1
+[sst_vpaned_height] 555
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.activation
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.autorestart
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.clk
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.cmdendaddresstogoto[8:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.cmdgotoaddresstogoto[8:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.cmdid[3:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.cpha
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.cpol
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.fetchedrxbyte[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.fetchedrxbyteispending
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.fetchrxbytepulse
+[color] 2
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.fetchtxbytepulse
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.forloopcount[7:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferaddress[6:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferavailable
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferprocessedpulse
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferreaddata[31:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferwritedata[31:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.hwbufferwriteenable[3:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.loopcount[7:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.ncs[14:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.operation[1:0]
+@22
+[color] 3
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.bytecount[8:0]
+[color] 3
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.packetlength[8:0]
+@23
+[color] 6
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.packetcount[8:0]
+[color] 6
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.packetmultiplier[8:0]
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.readhwbufferaddresspointer[6:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.readhwbufferrepeataddresspointer[6:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.readytofetchtxbyte
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.receivebytecount[8:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.receiveframestartaddress[6:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.rst
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.rxbyte[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.rxbyteispending
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.sclkperiodinns[9:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.selectedbuffernumberownedbysw
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.starttimerpulse
+@24
+[color] 7
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.statenumbered[4:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.swbufferprepared
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.swbufferspending[1:0]
+@22
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.timercount[20:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.timerexpired
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.tranceive
+@22
+[color] 2
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.txbyte[7:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.waitns[15:0]
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.writehwbufferaddresspointer[6:0]
+@28
+tb_top_wishbone.i_spicontroller.i_cmdprocessor.wtranspulsecontrolreg
+tb_top_wishbone.i_spicontroller.i_phy.clk
+tb_top_wishbone.i_spicontroller.i_phy.cpha
+tb_top_wishbone.i_spicontroller.i_phy.cpol
+@22
+tb_top_wishbone.i_spicontroller.i_phy.fetchedtxbyte[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.fetchedtxbyteispending
+tb_top_wishbone.i_spicontroller.i_phy.fetchrxbytepulse
+tb_top_wishbone.i_spicontroller.i_phy.fetchtxbytepulse
+tb_top_wishbone.i_spicontroller.i_phy.miso
+tb_top_wishbone.i_spicontroller.i_phy.mosi
+tb_top_wishbone.i_spicontroller.i_phy.readytofetchtxbyte
+tb_top_wishbone.i_spicontroller.i_phy.rst
+@22
+tb_top_wishbone.i_spicontroller.i_phy.rxbyte[7:0]
+tb_top_wishbone.i_spicontroller.i_phy.rxreg[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.sclk
+tb_top_wishbone.i_spicontroller.i_phy.sclkp
+@22
+tb_top_wishbone.i_spicontroller.i_phy.sclkperiodinns[9:0]
+tb_top_wishbone.i_spicontroller.i_phy.stretchcount16thns[14:0]
+tb_top_wishbone.i_spicontroller.i_phy.tranceivecount[4:0]
+tb_top_wishbone.i_spicontroller.i_phy.txbyte[7:0]
+tb_top_wishbone.i_spicontroller.i_phy.txreg[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.clk
+tb_top_wishbone.i_spicontroller.i_phy.cpha
+tb_top_wishbone.i_spicontroller.i_phy.cpol
+@22
+tb_top_wishbone.i_spicontroller.i_phy.fetchedtxbyte[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.fetchedtxbyteispending
+tb_top_wishbone.i_spicontroller.i_phy.fetchrxbytepulse
+tb_top_wishbone.i_spicontroller.i_phy.fetchtxbytepulse
+tb_top_wishbone.i_spicontroller.i_phy.miso
+tb_top_wishbone.i_spicontroller.i_phy.mosi
+tb_top_wishbone.i_spicontroller.i_phy.readytofetchtxbyte
+tb_top_wishbone.i_spicontroller.i_phy.rst
+@22
+tb_top_wishbone.i_spicontroller.i_phy.rxbyte[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.rxbyteispending
+@22
+tb_top_wishbone.i_spicontroller.i_phy.rxreg[7:0]
+@28
+tb_top_wishbone.i_spicontroller.i_phy.sclk
+tb_top_wishbone.i_spicontroller.i_phy.sclkp
+@22
+tb_top_wishbone.i_spicontroller.i_phy.sclkperiodinns[9:0]
+tb_top_wishbone.i_spicontroller.i_phy.stretchcount16thns[14:0]
+tb_top_wishbone.i_spicontroller.i_phy.tranceivecount[4:0]
+tb_top_wishbone.i_spicontroller.i_phy.txbyte[7:0]
+tb_top_wishbone.i_spicontroller.i_phy.txreg[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

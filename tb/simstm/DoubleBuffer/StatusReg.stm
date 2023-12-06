@@ -60,7 +60,7 @@ end proc
 waitForStatusRegOperationMVal:
 proc
     loop $WaitTimeOut
-        wait 1000
+        wait 10000
         call $getStatusRegOperationMVal          
         log message $INFO_3 "waitForStatusRegOperationMVal:" $StatusRegOperationMVal
         if $StatusRegOperationMVal = $StatusRegOperationMValToWaitFor
@@ -74,7 +74,7 @@ end proc
 waitForStatusRegHwBufferMVal:
 proc
     loop $WaitTimeOut
-        wait 1000
+        wait 10000
         call $getStatusRegHwBufferMVal          
         log message $INFO_3 "waitForStatusRegHwBufferMVal:{}" $StatusRegHwBufferMVal
         if $StatusRegHwBufferMVal = $StatusRegHwBufferMValToWaitFor

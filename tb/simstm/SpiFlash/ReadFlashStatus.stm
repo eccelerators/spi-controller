@@ -126,7 +126,7 @@ end proc
 waitForReadFlashStatusNotBusy:
 proc
       loop $WaitTimeOut
-          wait 1000
+          wait 10000
           call $readFlashStatus          
           log message $INFO_3 "waitForReadFlashStatusNotBusy: {}" $ReadFlashStatusVal
           and ReadFlashStatusVal 1  

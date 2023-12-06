@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
-<project name="SpiControllerModelSim-wishbone">
+<project name="SpiControllerModelSim-wishbone-infineon-spi-flash">
    <property environment="env"/>
    <property name="MODELSIM_BIN_DIR" value="/opt/intelFPGA/20.1/modelsim_ase/bin"/>
    <property name="ROOT_DIR" value="./../"/>
-   <property name="MODELSIM_RUN_DIR" value="${ROOT_DIR}/modelsim-wishbone"/>
+   <property name="MODELSIM_RUN_DIR" value="${ROOT_DIR}/modelsim-wishbone_infineon_spi_flash"/>
    <property name="MODELSIM_LIBRARIES_DIR" value="${MODELSIM_RUN_DIR}/libraries"/>
    <property name="TOP_LEVEL_NAME" value="work.tb_top_wishbone"/>
    
@@ -39,7 +39,8 @@
   
    
    <target name="compile" depends="
-     -do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v,
+     -do_compile_tb-ip_hdl_Infineon_s25fl129p00__conversions.vhd,
+     -do_compile_tb-ip_hdl_Infineon_s25fl129p00__s25fl129p00.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg_body.vhd,
      -do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_instructions_pkg.vhd,
@@ -59,7 +60,7 @@
      -do_compile_src_vhdl__CmdProcessor.vhd,
      -do_compile_src_vhdl__Phy.vhd,
      -do_compile_src_vhdl__SpiControllerWithWishboneBus.vhd,
-     -do_compile_tb_hdl__tb_top_wishbone.vhd"
+     -do_compile_tb_hdl__tb_top_wishbone_infineon_spi_flash.vhd"
          description="CompileAll"/>
          
    <target name="elaborate" description="ElabLinux">
@@ -73,11 +74,18 @@
       </exec>
    </target>
    
-   <target name="-do_compile_tb-ip_hdl_Winbond_W25Q128JVxIM__W25Q128JVxIM.v" description="compile W25Q128JVxIM.v">
-      <exec executable="${MODELSIM_BIN_DIR}/vlog" failonerror="true">
-         <arg value="./../tb-ip/hdl/Winbond/W25Q128JVxIM/W25Q128JVxIM.v"/>
+   <target name="-do_compile_tb-ip_hdl_Infineon_s25fl129p00__conversions.vhd" description="compile conversions.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Infineon/s25fl129p00/conversions.vhd"/>
       </exec>
-   </target>  
+   </target>
+   <target name="-do_compile_tb-ip_hdl_Infineon_s25fl129p00__s25fl129p00.vhd" description="compile s25fl129p00.vhd">
+      <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
+         <arg value="-2008"/>
+         <arg value="./../tb-ip/hdl/Infineon/s25fl129p00/s25fl129p00.vhd"/>
+      </exec>
+   </target>
    
    
    <target name="-do_compile_tb-ip_hdl_Eccelerators_simstm_src__tb_base_pkg.vhd" description="compile tb_pkg.vhd">
@@ -202,10 +210,10 @@
          <arg value="./../tb/hdl/tb_pkg_signals.vhd"/>
       </exec>
    </target>
-   <target name="-do_compile_tb_hdl__tb_top_wishbone.vhd" description="compile tb_top_wishbone.vhd">
+   <target name="-do_compile_tb_hdl__tb_top_wishbone_infineon_spi_flash.vhd" description="compile tb_top_wishbone_infineon_spi_flash.vhd">
       <exec executable="${MODELSIM_BIN_DIR}/vcom" failonerror="true">
          <arg value="-2008"/>
-         <arg value="./../tb/hdl/tb_top_wishbone.vhd"/>
+         <arg value="./../tb/hdl/tb_top_wishbone_infineon_spi_flash.vhd"/>
       </exec>
    </target>
    

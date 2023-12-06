@@ -15,7 +15,7 @@ end entity;
 architecture RTL of Ram is
 
 	type ram_type is array (0 to (2 ** Address'length * 4) - 1) of std_logic_vector(WriteData'range);
-	signal Ram : ram_type;
+	signal Ram : ram_type := (others => x"BABABABA");
 	signal ReadAddress : std_logic_vector(Address'range);
 
 begin
