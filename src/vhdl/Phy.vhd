@@ -87,8 +87,8 @@ begin
             ReadyToFetchTxByte <= '1';
             FetchRxBytePulse <= '0';
             TranceiveCount <= to_unsigned(30, 5);
-            RxReg <= b"0000_0000";
-            TxReg <= b"0000_0000";
+            RxReg <= (others => '0');
+            TxReg <= (others => '0');
             StretchCount16thNs <= (others => '0');
             FetchedTxByte <= (others => '0');
             FetchedTxByteIsPending <= '0';
@@ -107,6 +107,7 @@ begin
             if TranceiveCount = 30 then
                 if FetchedTxByteIsPending then
                     TxReg <= FetchedTxByte;
+                    MoSi <= FetchedTxByte(7);
                     ReadyToFetchTxByte <= '1';
                     if Cpha = '0' then
                         TranceiveCount <= to_unsigned(31, 5);
@@ -117,29 +118,82 @@ begin
                     RxByteIsPending <= '1';
                 end if;
             elsif TranceiveCount = 31 then
-                MoSi <= TxReg(7);
                 TranceiveCount <= to_unsigned(0, 5);
             else
                 if StretchCount16thNs = 0 then
-                    case to_integer(TranceiveCount) is
-                        when 0 | 2 | 4 | 6 | 8 | 10 | 12 =>
-                            RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
-                            SclkP <= '1';
-                            TranceiveCount <= TranceiveCount + 1;
-                        when 14 =>
-                            RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
-                            SclkP <= '1';
-                            FetchRxBytePulse <= '1';
-                            TranceiveCount <= TranceiveCount + 1;
-                        when 1 | 3 | 5 | 7 | 9 | 11 | 13 =>
-                            MoSi <= TxReg(6 - to_integer(TranceiveCount(3 downto 1)));
-                            SclkP <= '0';
-                            TranceiveCount <= TranceiveCount + 1;
-                        when others =>
-                            SclkP <= '0';
-                            RxByteIsPending <= '0';
-                            TranceiveCount <= to_unsigned(30, 5);
-                    end case;
+                    if Cpha then
+                        case to_integer(TranceiveCount) is
+                            when 0 | 2 | 4 | 6 | 8 | 10 | 12 =>
+                                MoSi <= TxReg(7 - to_integer(TranceiveCount(3 downto 1)));
+                                SclkP <= '1';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 14 =>
+                                MoSi <= TxReg(7 - to_integer(TranceiveCount(3 downto 1)));
+                                SclkP <= '1';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 1 | 3 | 5 | 7 | 9 | 11 | 13 =>
+                                RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                                SclkP <= '0';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 15 =>
+                                RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                                FetchRxBytePulse <= '1';
+                                if FetchedTxByteIsPending then
+                                    TxReg <= FetchedTxByte;
+                                    ReadyToFetchTxByte <= '1';
+                                    FetchedTxByteIsPending <= '0';
+                                    RxByteIsPending <= '1';
+                                    TranceiveCount <= to_unsigned(0, 5);
+                                else
+                                    RxByteIsPending <= '0';
+                                    TranceiveCount <= to_unsigned(30, 5);
+                                end if;
+                                SclkP <= '0';
+                            when others =>
+                                SclkP <= '0';
+                                RxByteIsPending <= '0';
+                                TranceiveCount <= to_unsigned(30, 5);
+                        end case;
+                    else
+                        case to_integer(TranceiveCount) is
+                            when 0 | 2 | 4 | 6 | 8 | 10 | 12 =>
+                                RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                                SclkP <= '1';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 14 =>
+                                RxReg(7 - to_integer(TranceiveCount(3 downto 1))) <= MiSo;
+                                SclkP <= '1';
+                                FetchRxBytePulse <= '1';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 1 | 3 | 5 | 7 | 9 | 11 | 13 =>
+                                MoSi <= TxReg(6 - to_integer(TranceiveCount(3 downto 1)));
+                                SclkP <= '0';
+                                TranceiveCount <= TranceiveCount + 1;
+                            when 15 =>
+                                if FetchedTxByteIsPending then
+                                    TxReg <= FetchedTxByte;
+                                    MoSi <= FetchedTxByte(7);
+                                    ReadyToFetchTxByte <= '1';
+                                    if Cpha = '0' then
+                                        TranceiveCount <= to_unsigned(31, 5);
+                                    else
+                                        TranceiveCount <= to_unsigned(31, 5);
+                                    end if;
+                                    FetchedTxByteIsPending <= '0';
+                                    RxByteIsPending <= '1';
+                                    TranceiveCount <= to_unsigned(0, 5);
+                                else
+                                    RxByteIsPending <= '0';
+                                    TranceiveCount <= to_unsigned(30, 5);
+                                end if;
+                                SclkP <= '0';
+                            when others =>
+                                SclkP <= '0';
+                                RxByteIsPending <= '0';
+                                TranceiveCount <= to_unsigned(30, 5);
+                        end case;
+                    
+                    end if;
                 end if;
             end if;
         end if;

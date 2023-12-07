@@ -63,7 +63,9 @@ entity CmdProcessor is
 end entity;
 
 
+
 architecture RTL of CmdProcessor is
+
 
     type State_T is (ControllerOff, ControllerIdle, ControllerRestart, SetCmdReadAddress, CmdDispatch,
         SetTxDataReadAddress, TransceiveByteStart, SetRxDataWriteToNext, SetRxDataWriteToEnd, TransceiveByteEnd, SetLastRxDataWrite, StoreLastRxByte,
@@ -96,7 +98,11 @@ architecture RTL of CmdProcessor is
     signal Tranceive : std_logic;
     signal StateNumbered : unsigned(4 downto 0);
 
+
 begin
+
+
+    -- For GHDL and HW debug
     prcNumberStates : process(State) is
     begin
         case State is
@@ -142,15 +148,15 @@ begin
         end case;
     end process;
 
+
     HwBufferAddress <= std_logic_vector(WriteHwBufferAddressPointer) when HwBufferWriteEnable /= "0000" else std_logic_vector(ReadHwBufferAddressPointer);
     CmdId <= HwBufferReadData(31 downto 28);
 
 
     prcCmdProcessor : process(Clk, Rst) is
-    begin
-
-        if Rst = '1' then
-
+        procedure init is
+        begin
+            Operation <= OFF;
             SelectedBufferNumberOwnedBySw <= '0';
             ReadHwBufferAddressPointer <= (others => '0');
             ReadHwBufferRepeatAddressPointer <= (others => '0');
@@ -164,33 +170,38 @@ begin
             PacketCount <= (others => '0');
             ByteCount <= (others => '0');
             WaitNs <= (others => '0');
-            StartTimerPulse <= '0';
             CmdGotoAddressToGoto <= (others => '0');
             ForLoopCount <= (others => '0');
             CmdEndAddressToGoto <= (others => '0');
             AutoRestart <= '0';
-            TxByte <= (others => '0');
-            FetchTxBytePulse <= '0';
-            FetchedRxByte <= (others => '0');
-            FetchedRxByteIsPending  <= '0';
             LoopCount <= (others => '0');
-            Operation <= OFF;
             ReceiveByteCount <= (others => '0');
             Tranceive <= '0';
-            HwBufferProcessedPulse <= '0';
             WriteHwBufferAddressPointer <= (others => '0');
             HwBufferWriteData <= (others => '0');
-            HwBufferWriteEnable <= (others => '0');
             ReceiveByteCount <= (others => '0');
+            TxByte <= (others => '0');
+            FetchedRxByte <= (others => '0');
+            FetchedRxByteIsPending  <= '0';
             State <= ControllerOff;
+        end procedure;
 
-        elsif rising_edge(Clk) then
-
-            -- default assignments
+        procedure setDefaults is
+        begin
             StartTimerPulse <= '0';
             FetchTxBytePulse <= '0';
             HwBufferProcessedPulse <= '0';
-            HwBufferWriteEnable <= (others => '0'); -- default assignment
+            HwBufferWriteEnable <= (others => '0');
+        end procedure;
+
+    begin
+
+        if Rst = '1' then
+            init;
+            setDefaults;
+
+        elsif rising_edge(Clk) then
+            setDefaults;
             -- 
             if FetchRxBytePulse then
                 FetchedRxByte <= RxByte;
@@ -207,8 +218,7 @@ begin
 
                 when ControllerIdle => -- 1
                     if Activation = DEACTIVATED then
-                        Operation <= OFF;
-                        State <= ControllerOff;
+                        init;
                     elsif SwBuffersPending > 0 then
                         SelectedBufferNumberOwnedBySw <= not SelectedBufferNumberOwnedBySw;
                         ReadHwBufferAddressPointer <= (others => '0');
@@ -219,8 +229,7 @@ begin
 
                 when ControllerRestart => -- 2
                     if Activation = DEACTIVATED then
-                        Operation <= OFF;
-                        State <= ControllerOff;
+                        init;
                     elsif SwBuffersPending > 0  then
                         SelectedBufferNumberOwnedBySw <= not SelectedBufferNumberOwnedBySw;
                         ReadHwBufferAddressPointer <= (others => '0');
@@ -355,7 +364,7 @@ begin
                     else
                         State <= SetCmdReadAddress;
                     end if;
-                
+
                 when StoreLastRxByte => -- 11
                     if FetchedRxByteIsPending then
                         if Tranceive then
@@ -406,6 +415,7 @@ begin
 
     end process;
 
+
     prcTimer : process (Clk, Rst) is
     begin
         if Rst = '1' then
@@ -425,7 +435,9 @@ begin
         end if;
     end process;
 
+
     HwBufferAvailable <= '1' when SwBuffersPending < 2 else '0';
+
 
     prcSwBuffer : process (Clk, Rst) is
     begin

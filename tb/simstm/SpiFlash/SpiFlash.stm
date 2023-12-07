@@ -43,6 +43,8 @@
 	const CHIP_SELECT_NONE_VAL 0xF -- for all SpiFlash modules
 	
 	var SPI_FLASH_CLK_PERIOD_NS 20 -- for all SpiFlash modules
+	var SPI_FLASH_CLK_POLARITY 0 -- for all SpiFlash modules
+	var SPI_FLASH_CLK_PHASE 0 -- for all SpiFlash modules
 
 	bus SpiFlashBus 0
 
