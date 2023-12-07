@@ -1,0 +1,121 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu Dec  7 06:56:55 2023
+[*]
+[dumpfile] "/home/dev/git/eccelerators/spi-controller/ghdl-axi4lite_infineon_spi_flash/trace.vcd"
+[dumpfile_mtime] "Thu Dec  7 06:54:53 2023"
+[dumpfile_size] 176236424
+[savefile] "/home/dev/git/eccelerators/spi-controller/ghdl-axi4lite_infineon_spi_flash/gtk-waves.gtkw"
+[timestart] 0
+[size] 3333 1784
+[pos] 358 37
+*-39.473572 58915000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] tb_top_axi4lite.
+[treeopen] tb_top_axi4lite.i_s25fl129p00.
+[treeopen] tb_top_axi4lite.i_spicontrollerwithaxi4litebus.
+[sst_width] 233
+[signals_width] 427
+[sst_expanded] 1
+[sst_vpaned_height] 555
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.activation
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.autorestart
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.bytecount[8:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.clk
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.cmdendaddresstogoto[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.cmdgotoaddresstogoto[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.cmdid[3:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.cpha
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.cpol
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.fetchedrxbyte[7:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.fetchedrxbyteispending
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.fetchrxbytepulse
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.fetchtxbytepulse
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.forloopcount[7:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferaddress[6:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferavailable
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferprocessedpulse
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferreaddata[31:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferwritedata[31:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.hwbufferwriteenable[3:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.loopcount[7:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.ncs[14:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.operation[1:0]
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.packetcount[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.packetlength[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.packetmultiplier[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.readhwbufferaddresspointer[6:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.readhwbufferrepeataddresspointer[6:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.readytofetchtxbyte
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.receivebytecount[8:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.receiveframestartaddress[6:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.rst
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.rxbyte[7:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.rxbyteispending
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.sclkperiodinns[9:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.selectedbuffernumberownedbysw
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.starttimerpulse
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.statenumbered[4:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.swbufferprepared
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.swbufferspending[1:0]
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.timercount[20:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.timerexpired
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.tranceive
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.txbyte[7:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.waitns[15:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.writehwbufferaddresspointer[6:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_cmdprocessor.wtranspulsecontrolreg
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.clk
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.cpha
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.cpol
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.fetchedtxbyte[7:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.fetchedtxbyteispending
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.fetchrxbytepulse
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.fetchtxbytepulse
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.miso
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.mosi
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.readytofetchtxbyte
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.rst
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.rxbyte[7:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.rxbyteispending
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.rxreg[7:0]
+@28
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.sclk
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.sclkp
+@22
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.sclkperiodinns[9:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.stretchcount16thns[14:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.tranceivecount[4:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.txbyte[7:0]
+tb_top_axi4lite.i_spicontrollerwithaxi4litebus.i_phy.txreg[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

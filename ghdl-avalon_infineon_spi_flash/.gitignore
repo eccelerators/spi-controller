@@ -2,5 +2,12 @@
 !.gitignore
 !build.xml
 !modelsim.ini
-!wave.do
+!gtk-waves.gtkw
+!run-gtkwave.sh
+!run.sh
+!run-vcd.sh
+!start-ghdl-docker.sh
+
+
+
 

@@ -34,120 +34,123 @@ use ieee.numeric_std.all;
 use work.SpiControllerIfcPackage.all;
 
 entity SpiControllerWithAvalonBus is
-	port(
-		Clk : in std_logic;
-		Rst : in std_logic;
-		SpiControllerIfcAvalonDown : in T_SpiControllerIfcAvalonDown;
-		SpiControllerIfcAvalonUp : out T_SpiControllerIfcAvalonUp;
-		SpiControllerIfcTrace : out T_SpiControllerIfcTrace;
-		SClk : out std_logic;
-		MiSo : in std_logic;
-		MoSi : out std_logic;
-		nCs : out std_logic_vector(14 downto 0)
-	);
+    port(
+        Clk : in std_logic;
+        Rst : in std_logic;
+        SpiControllerIfcAvalonDown : in T_SpiControllerIfcAvalonDown;
+        SpiControllerIfcAvalonUp : out T_SpiControllerIfcAvalonUp;
+        SpiControllerIfcTrace : out T_SpiControllerIfcTrace;
+        SClk : out std_logic;
+        MiSo : in std_logic;
+        MoSi : out std_logic;
+        nCs : out std_logic_vector(14 downto 0)
+    );
 end entity;
 
 architecture RTL of SpiControllerWithAvalonBus is
-	
-	signal SpiControllerBlkDown : T_SpiControllerIfcSpiControllerBlkDown;
-	signal SpiControllerBlkUp : T_SpiControllerIfcSpiControllerBlkUp;
-	
-	signal SelectedBufferNumberOwnedBySw : std_logic;
-	signal SwBufferWriteEnable : std_logic_vector(3 downto 0);
-	signal HwBufferWriteEnable : std_logic_vector(3 downto 0);
-	signal HwBufferAddress : std_logic_vector(6 downto 0);
-	signal HwBufferWriteData : std_logic_vector(31 downto 0);
-	signal HwBufferReadData : std_logic_vector(31 downto 0);
 
-	signal DoTransceivePulse : std_logic;	
-	signal ReleaseTxDataPulse : std_logic;
-	signal StoreRxDataPulse : std_logic;
-	signal TxByte : std_logic_vector(7 downto 0);
-	signal RxByte : std_logic_vector(7 downto 0);
-	signal CPol : std_logic;
-	signal CPha : std_logic;
-	signal SClkPeriodInNs : std_logic_vector(9 downto 0);
-	
-	signal WaitRequestSwBuffer : std_logic;
+    signal SpiControllerBlkDown : T_SpiControllerIfcSpiControllerBlkDown;
+    signal SpiControllerBlkUp : T_SpiControllerIfcSpiControllerBlkUp;
+
+    signal SelectedBufferNumberOwnedBySw : std_logic;
+    signal SwBufferWriteEnable : std_logic_vector(3 downto 0);
+    signal HwBufferWriteEnable : std_logic_vector(3 downto 0);
+    signal HwBufferAddress : std_logic_vector(6 downto 0);
+    signal HwBufferWriteData : std_logic_vector(31 downto 0);
+    signal HwBufferReadData : std_logic_vector(31 downto 0);
+
+    signal FetchTxBytePulse : std_logic;
+    signal ReadyToFetchTxByte : std_logic;
+    signal FetchRxBytePulse : std_logic;
+    signal RxByteIsPending : std_logic;
+    signal TxByte : std_logic_vector(7 downto 0);
+    signal RxByte : std_logic_vector(7 downto 0);
+    signal CPol : std_logic;
+    signal CPha : std_logic;
+    signal SClkPeriodInNs : std_logic_vector(9 downto 0);
+
+    signal WaitRequestSwBuffer : std_logic;
 
 
 begin
 
-	i_SpiControllerIfcAvalon : entity work.SpiControllerIfcAvalon
-		port map(
-			Clk => Clk,
-			Rst => Rst,
-			AvalonDown => SpiControllerIfcAvalonDown,
-			AvalonUp => SpiControllerIfcAvalonUp,
-			Trace => SpiControllerIfcTrace,
-			SpiControllerBlkDown => SpiControllerBlkDown,
-			SpiControllerBlkUp => SpiControllerBlkUp
-		);
+    i_SpiControllerIfcAvalon : entity work.SpiControllerIfcAvalon
+        port map(
+            Clk => Clk,
+            Rst => Rst,
+            AvalonDown => SpiControllerIfcAvalonDown,
+            AvalonUp => SpiControllerIfcAvalonUp,
+            Trace => SpiControllerIfcTrace,
+            SpiControllerBlkDown => SpiControllerBlkDown,
+            SpiControllerBlkUp => SpiControllerBlkUp
+        );
 
-	i_Phy : entity work.Phy
-		generic map(
-			ClkPeriodIn16thNs => 10 * 16
-		)
-		port map(
-			Clk => Clk,
-			Rst => Rst,
-			SClk => SClk,
-			MiSo => MiSo,
-			MoSi => MoSi,
-			DoTransceivePulse => DoTransceivePulse,
-			ReleaseTxDataPulse => ReleaseTxDataPulse,
-			StoreRxDataPulse => StoreRxDataPulse,
-			TxByte => TxByte,
-			RxByte => RxByte,
-			CPol => CPol,
-			CPha => CPha,
-			SClkPeriodInNs => SClkPeriodInNs
-		);
+    i_Phy : entity work.Phy
+        generic map(
+            ClkPeriodIn16thNs => 10 * 16
+        )
+        port map(
+            Clk => Clk,
+            Rst => Rst,
+            SClk => SClk,
+            MiSo => MiSo,
+            MoSi => MoSi,
+            FetchTxBytePulse => FetchTxBytePulse,
+            ReadyToFetchTxByte => ReadyToFetchTxByte,
+            FetchRxBytePulse => FetchRxBytePulse,
+            RxByteIsPending => RxByteIsPending,
+            TxByte => TxByte,
+            RxByte => RxByte,
+            CPol => CPol,
+            CPha => CPha,
+            SClkPeriodInNs => SClkPeriodInNs
+        );
 
-	i_CmdProcessor : entity work.CmdProcessor
-		generic map(
-			ClkPeriodIn16thNs => 10 * 16
-		)
-		port map(
-			Clk => Clk,
-			Rst => Rst,
-			Activation => SpiControllerBlkDown.Activation,
-			SwBufferPrepared => SpiControllerBlkDown.SwBuffer,
-			WTransPulseControlReg  => SpiControllerBlkDown.WTransPulseControlReg,
-			Operation => SpiControllerBlkUp.Operation,
-			HwBufferAvailable => SpiControllerBlkUp.HwBuffer,
-			SelectedBufferNumberOwnedBySw => SelectedBufferNumberOwnedBySw,
-			HwBufferAddress => HwBufferAddress,
-			HwBufferWriteEnable => HwBufferWriteEnable,
-			HwBufferWriteData => HwBufferWriteData,
-			HwBufferReadData => HwBufferReadData,
-			CPol => CPol,
-			CPha => CPha,
-			SClkPeriodInNs => SClkPeriodInNs,
-			DoTransceivePulse => DoTransceivePulse,
-			ReleaseTxDataPulse => ReleaseTxDataPulse,
-			StoreRxDataPulse => StoreRxDataPulse,
-			TxByte => TxByte,
-			RxByte => RxByte,
-			nCs => nCs
-		);
+    i_CmdProcessor : entity work.CmdProcessor
+        generic map(
+            ClkPeriodIn16thNs => 10 * 16
+        )
+        port map(
+            Clk => Clk,
+            Rst => Rst,
+            Activation => SpiControllerBlkDown.Activation,
+            SwBufferPrepared => SpiControllerBlkDown.SwBuffer,
+            WTransPulseControlReg  => SpiControllerBlkDown.WTransPulseControlReg,
+            Operation => SpiControllerBlkUp.Operation,
+            HwBufferAvailable => SpiControllerBlkUp.HwBuffer,
+            SelectedBufferNumberOwnedBySw => SelectedBufferNumberOwnedBySw,
+            HwBufferAddress => HwBufferAddress,
+            HwBufferWriteEnable => HwBufferWriteEnable,
+            HwBufferWriteData => HwBufferWriteData,
+            HwBufferReadData => HwBufferReadData,
+            CPol => CPol,
+            CPha => CPha,
+            SClkPeriodInNs => SClkPeriodInNs,
+            FetchTxBytePulse => FetchTxBytePulse,
+            ReadyToFetchTxByte => ReadyToFetchTxByte,
+            FetchRxBytePulse => FetchRxBytePulse,
+            RxByteIsPending => RxByteIsPending,
+            TxByte => TxByte,
+            RxByte => RxByte,
+            nCs => nCs
+        );
 
-	i_DoubleBuffer : entity work.DoubleBuffer
-		port map(
-			Clk => Clk,
-			Rst => Rst,
-			SelectedBufferNumberOwnedBySw => SelectedBufferNumberOwnedBySw,
-			HwBufferWriteEnable => HwBufferWriteEnable,
-			HwBufferAddress => HwBufferAddress,
-			HwBufferWriteData => HwBufferWriteData,
-			HwBufferReadData => HwBufferReadData,
-			SwBufferWriteEnable => SwBufferWriteEnable,
-			SwBufferAddress => SpiControllerBlkDown.CellBufferAddress(8 downto 2),
-			SwBufferWriteData => SpiControllerBlkDown.CellBufferWriteData,
-			SwBufferReadData => SpiControllerBlkUp.CellBufferReadData
-		);
+    i_DoubleBuffer : entity work.DoubleBuffer
+        port map(
+            Clk => Clk,
+            Rst => Rst,
+            SelectedBufferNumberOwnedBySw => SelectedBufferNumberOwnedBySw,
+            HwBufferWriteEnable => HwBufferWriteEnable,
+            HwBufferAddress => HwBufferAddress,
+            HwBufferWriteData => HwBufferWriteData,
+            HwBufferReadData => HwBufferReadData,
+            SwBufferWriteEnable => SwBufferWriteEnable,
+            SwBufferAddress => SpiControllerBlkDown.CellBufferAddress(8 downto 2),
+            SwBufferWriteData => SpiControllerBlkDown.CellBufferWriteData,
+            SwBufferReadData => SpiControllerBlkUp.CellBufferReadData
+        );
 
-  
+
     prcWaitRequestSwBuffer : process (Clk, Rst)
     begin
         if (Rst = '1') then
@@ -156,9 +159,9 @@ begin
             WaitRequestSwBuffer <= not ((SpiControllerBlkDown.CellBufferWrite or SpiControllerBlkDown.CellBufferRead) and WaitRequestSwBuffer);
         end if;
     end process;
-	
-	SpiControllerBlkUp.CellBufferWaitRequest <= WaitRequestSwBuffer;
-	
-	SwBufferWriteEnable <= SpiControllerBlkDown.CellBufferByteEnable when not WaitRequestSwBuffer and SpiControllerBlkDown.CellBufferWrite else "0000";
+
+    SpiControllerBlkUp.CellBufferWaitRequest <= WaitRequestSwBuffer;
+
+    SwBufferWriteEnable <= SpiControllerBlkDown.CellBufferByteEnable when not WaitRequestSwBuffer and SpiControllerBlkDown.CellBufferWrite else "0000";
 
 end architecture;

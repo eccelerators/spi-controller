@@ -79,12 +79,32 @@ proc
 	call $CellBufferIfcInit
 	
 	verbosity $INFO_2
-	trace 0x00
+	trace 0
 	wait 1000
 	log message $INFO "Main test started"
 	log message $INFO_3 "HwBufferMask: {}" $HwBufferMask
 	
-	call $testSpiFlash
+	equ CmdSetClkPolarityMVal $CmdSetCell_LowMVal
+    call $setCmdSetClkPolarityMVal
+    equ CmdSetClkPhaseMVal $CmdSetCell_FirstMVal
+	
+	equ SPI_FLASH_CLK_PERIOD_NS 20
+	equ SPI_FLASH_CLK_POLARITY $CmdSetCell_HighMVal
+	equ SPI_FLASH_CLK_PHASE $CmdSetCell_SecondMVal
+	loop 5
+		call $testSpiFlash
+		add SPI_FLASH_CLK_PERIOD_NS 20
+	end loop
+	equ SPI_FLASH_CLK_PERIOD_NS 20
+	equ SPI_FLASH_CLK_POLARITY $CmdSetCell_LowMVal
+	equ SPI_FLASH_CLK_PHASE $CmdSetCell_FirstMVal
+	loop 5
+		call $testSpiFlash
+		add SPI_FLASH_CLK_PERIOD_NS 20
+	end loop
+	equ SPI_FLASH_CLK_PERIOD_NS 20
+	equ SPI_FLASH_CLK_POLARITY 0
+	equ SPI_FLASH_CLK_PHASE 0
 	
 	log message $INFO "Main test finished"
 	wait 1000

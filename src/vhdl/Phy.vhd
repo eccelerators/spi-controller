@@ -103,7 +103,7 @@ begin
                 FetchedTxByteIsPending <= '1';
                 ReadyToFetchTxByte <= '0';
             end if;
-            
+
             if TranceiveCount = 30 then
                 if FetchedTxByteIsPending then
                     TxReg <= FetchedTxByte;
@@ -192,7 +192,7 @@ begin
                                 RxByteIsPending <= '0';
                                 TranceiveCount <= to_unsigned(30, 5);
                         end case;
-                    
+
                     end if;
                 end if;
             end if;

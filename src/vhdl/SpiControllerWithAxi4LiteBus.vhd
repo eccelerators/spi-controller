@@ -60,9 +60,10 @@ architecture RTL of SpiControllerWithAxi4LiteBus is
 	signal HwBufferWriteData : std_logic_vector(31 downto 0);
 	signal HwBufferReadData : std_logic_vector(31 downto 0);
 
-	signal DoTransceivePulse : std_logic;	
-	signal ReleaseTxDataPulse : std_logic;
-	signal StoreRxDataPulse : std_logic;
+    signal FetchTxBytePulse : std_logic;    
+    signal ReadyToFetchTxByte : std_logic;
+    signal FetchRxBytePulse : std_logic;
+    signal RxByteIsPending : std_logic;
 	signal TxByte : std_logic_vector(7 downto 0);
 	signal RxByte : std_logic_vector(7 downto 0);
 	signal CPol : std_logic;
@@ -102,9 +103,10 @@ begin
 			SClk => SClk,
 			MiSo => MiSo,
 			MoSi => MoSi,
-			DoTransceivePulse => DoTransceivePulse,
-			ReleaseTxDataPulse => ReleaseTxDataPulse,
-			StoreRxDataPulse => StoreRxDataPulse,
+            FetchTxBytePulse => FetchTxBytePulse,
+            ReadyToFetchTxByte => ReadyToFetchTxByte,
+            FetchRxBytePulse => FetchRxBytePulse,
+            RxByteIsPending => RxByteIsPending,
 			TxByte => TxByte,
 			RxByte => RxByte,
 			CPol => CPol,
@@ -132,9 +134,10 @@ begin
 			CPol => CPol,
 			CPha => CPha,
 			SClkPeriodInNs => SClkPeriodInNs,
-			DoTransceivePulse => DoTransceivePulse,
-			ReleaseTxDataPulse => ReleaseTxDataPulse,
-			StoreRxDataPulse => StoreRxDataPulse,
+            FetchTxBytePulse => FetchTxBytePulse,
+            ReadyToFetchTxByte => ReadyToFetchTxByte,
+            FetchRxBytePulse => FetchRxBytePulse,
+            RxByteIsPending => RxByteIsPending,
 			TxByte => TxByte,
 			RxByte => RxByte,
 			nCs => nCs
