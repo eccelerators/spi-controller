@@ -1,18 +1,18 @@
 [submodule "sphinx-template"]
 	path = sphinx-template
-	url = git@github.com:eccelerators/sphinx-template.git
+	url = https://github.com/eccelerators/sphinx-template.git
 [submodule "eccelerators-docbook"]
 	path = eccelerators-docbook
-	url = git@github.com:eccelerators/eccelerators-docbook.git
+	url = https://github.com/eccelerators/eccelerators-docbook.git
 [submodule "sphinx_docbook"]
 	path = sphinx_docbook
-	url = git@github.com:eccelerators/sphinx_docbook.git
+	url = https://github.com/eccelerators/sphinx_docbook.git
 [submodule "tb-ip/hdl/Eccelerators/simstm"]
 	path = tb-ip/hdl/Eccelerators/simstm
-	url = git@github.com:eccelerators/simstm.git
+	url = https://github.com/eccelerators/simstm.git
 [submodule "hxs/bases/usual-objects"]
 	path = hxs/bases/usual-objects
-	url = git@github.com:eccelerators/usual-objects.git
+	url = https://github.com/eccelerators/usual-objects.git
 [submodule "hxs/bases/double-buffer-controller"]
 	path = hxs/bases/double-buffer-controller
-	url = git@github.com:eccelerators/double-buffer-controller.git
+	url = https://github.com/eccelerators/double-buffer-controller.git
